@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/common/shadcn/input";
 import { Progress } from "@/components/ui/common/shadcn/progress";
 import { Textarea } from "@/components/ui/common/shadcn/textarea";
 
-export default function Home() {
+function Home() {
   return (
     <div className="flex flex-col gap-y-4">
       <div>
@@ -27,3 +27,5 @@ export default function Home() {
     </div>
   );
 }
+
+export default Home;
