@@ -1,13 +1,21 @@
-import { dirname } from "path";
+import {
+  dirname,
+} from "path";
 import js from "@eslint/js";
 import globals from "globals";
 import tseslint from "typescript-eslint";
 import pluginReact from "eslint-plugin-react";
 import pluginJsxA11y from "eslint-plugin-jsx-a11y";
 import pluginReactHooks from "eslint-plugin-react-hooks";
-import { defineConfig } from "eslint/config";
-import { FlatCompat } from "@eslint/eslintrc";
-import { fileURLToPath } from "url";
+import {
+  defineConfig,
+} from "eslint/config";
+import {
+  FlatCompat,
+} from "@eslint/eslintrc";
+import {
+  fileURLToPath,
+} from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -18,8 +26,16 @@ const compat = new FlatCompat({
 
 export default defineConfig([
   ...compat.extends("next/core-web-vitals", "next/typescript", "plugin:@next/next/recommended"),
-  { files: ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"], plugins: { js }, extends: ["js/recommended"] },
-  { files: ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"], languageOptions: { globals: globals.browser } },
+  {
+    files: ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"], plugins: {
+      js,
+    }, extends: ["js/recommended"],
+  },
+  {
+    files: ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"], languageOptions: {
+      globals: globals.browser,
+    },
+  },
   tseslint.configs.recommended,
   pluginReact.configs.flat.recommended,
   {
@@ -30,6 +46,10 @@ export default defineConfig([
     rules: {
       "react/react-in-jsx-scope": "off",
       "react/jsx-props-no-spreading": "off",
+      "react/jsx-indent": ["error", 2],
+
+      "no-unused-vars": "off",
+      "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
 
       "comma-dangle": ["error", {
         arrays: "always-multiline",
@@ -39,7 +59,6 @@ export default defineConfig([
         functions: "never",
       }],
       eqeqeq: ["error", "always"],
-      "no-unused-vars": "error",
       "no-undef": "warn",
 
       "no-multiple-empty-lines": ["error", {
@@ -51,7 +70,7 @@ export default defineConfig([
       "no-multi-spaces": ["error", {
         ignoreEOLComments: false,
       }],
-      indent: ["warn", 2],
+      indent: ["error", 2],
       quotes: ["error", "double"],
       semi: ["error", "always"],
       "max-len": "off",

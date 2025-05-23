@@ -6,7 +6,9 @@ import { cn } from "@/lib/utils";
 import { Poppins } from "next/font/google";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
+import NavbarSidebar from "./NavbarSidebar";
+import { MenuIcon } from "lucide-react";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -68,6 +70,10 @@ const navbarItems = [
 
 const Navbar = () => {
   const pathname = usePathname();
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
+  const toggleOpenSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
   return (
     <nav className="h-20 border-b flex justify-between font-medium bg-white">
       <Link href="/" className="flex items-center pl-6">
@@ -102,13 +108,27 @@ const Navbar = () => {
           asChild
           className="border-l border-t-0 border-b-0 border-r-0 px-12 h-full rounded-none bg-black hover:bg-pink-400 text-white hover:text-black transition-colors text-lg"
         >
-          <Link 
+          <Link
             href={`/${routes.SIGN_UP_ROUTE}`}
           >
             Start selling
           </Link>
         </Button>
       </div>
+      <div className="flex lg:hidden items-center justify-center">
+        <Button
+          variant="ghost"
+          className="size-14 border-transparent"
+          onClick={toggleOpenSidebar}
+        >
+          <MenuIcon className="size-8" />
+        </Button>
+      </div>
+      <NavbarSidebar
+        items={navbarItems}
+        open={isSidebarOpen}
+        onOpenChange={setIsSidebarOpen}
+      />
     </nav>
   );
 };
