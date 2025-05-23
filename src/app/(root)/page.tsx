@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/common/shadcn/textarea";
 
 function Home() {
   return (
-    <div className="flex flex-col gap-y-4">
+    <main className="flex flex-col gap-y-4 p-6">
       <div>
         <Button variant="elevated">
           test button
@@ -24,7 +24,7 @@ function Home() {
       <div>
         <Checkbox />
       </div>
-    </div>
+    </main>
   );
 }
 
