@@ -34,6 +34,7 @@ const NavbarSidebar = ({
       <SheetContent
         className="p-0 transition-none"
         side="left"
+        data-testid="navbar-sidebar-content"
       >
         <SheetHeader
           className="p-4 border-b"

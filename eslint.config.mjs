@@ -16,6 +16,7 @@ import {
 import {
   fileURLToPath,
 } from "url";
+import pluginJest from "eslint-plugin-jest";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -25,7 +26,24 @@ const compat = new FlatCompat({
 });
 
 export default defineConfig([
+
   ...compat.extends("next/core-web-vitals", "next/typescript", "plugin:@next/next/recommended"),
+  // jest block
+  {
+    files: ["**/*.test.{js,ts,jsx,tsx}", "**/__tests__/**/*.{js,ts,jsx,tsx}"],
+    languageOptions: {
+      globals: {
+        ...globals.jest,
+      },
+    },
+    plugins: {
+      jest: pluginJest,
+    },
+    rules: {
+      // Optional: enable recommended rules
+      ...pluginJest.configs.recommended.rules,
+    },
+  },
   {
     files: ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"], plugins: {
       js,
@@ -75,6 +93,12 @@ export default defineConfig([
       semi: ["error", "always"],
       "max-len": "off",
       "linebreak-style": ["error", "unix"],
+    },
+  },
+  {
+    files: ["**/*.config.{js,ts,jsx,tsx}"],
+    rules: {
+      "@typescript-eslint/no-require-imports": "off",
     },
   },
 ]);

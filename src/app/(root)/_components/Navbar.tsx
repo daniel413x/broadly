@@ -120,6 +120,7 @@ const Navbar = () => {
           variant="ghost"
           className="size-14 border-transparent"
           onClick={toggleOpenSidebar}
+          data-testid="navbar-menu-button"
         >
           <MenuIcon className="size-8" />
         </Button>
