@@ -1,8 +1,8 @@
 const FeaturesPageContent = () => {
   return (
-    <div>
+    <h1>
       Arriving soon!
-    </div>
+    </h1>
   );
 };
 

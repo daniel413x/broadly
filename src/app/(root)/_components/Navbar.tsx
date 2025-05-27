@@ -76,7 +76,11 @@ const Navbar = () => {
   };
   return (
     <nav className="h-20 border-b flex justify-between font-medium bg-white">
-      <Link href="/" className="flex items-center pl-6">
+      <Link
+        href="/"
+        className="flex items-center pl-6"
+        data-testid="navbar-logo"
+      >
         <span className={cn("text-5xl font-semibold", poppins.className)}>
           broadly
         </span>
@@ -121,6 +125,7 @@ const Navbar = () => {
           className="size-14 border-transparent"
           onClick={toggleOpenSidebar}
           data-testid="navbar-menu-button"
+          aria-label="Open menu"
         >
           <MenuIcon className="size-8" />
         </Button>

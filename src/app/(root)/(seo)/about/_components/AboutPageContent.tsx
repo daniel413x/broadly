@@ -1,8 +1,8 @@
 const AboutPageContent = () => {
   return (
-    <div>
+    <h1>
       Arriving soon!
-    </div>
+    </h1>
   );
 };
 
