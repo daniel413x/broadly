@@ -144,7 +144,7 @@ pipeline {
 def startServers() {
     def pids = [:]
 
-    pids.frontend = sh(script: 'npm run dev & echo $!', returnStdout: true).trim()
+    pids.frontend = sh(script: 'npm run dev & echo $! > dev.pid', returnStdout: true).trim()
 
     return pids
 }
@@ -170,7 +170,7 @@ def waitForService(url, serviceName) {
 // utility function to stop servers
 def stopServers(pids) {
     pids.each { key, pid ->
-        sh "kill ${pid} || true"
+        sh 'kill $(cat dev.pid) || true'
     }
 }
 
