@@ -34,6 +34,14 @@ pipeline {
             }
         }
 
+      stage('Pull Dependencies'){
+          steps{
+            sh '''
+            git clone https://github.com/daniel413x/broadly-functional-tests.git functional-tests
+            '''
+          }
+      }
+
         stage('Build Frontend') {
             steps {
                 dir('client') {
@@ -77,6 +85,40 @@ pipeline {
                 }
             }
         }
+
+        stage('Perform Functional Tests') {
+            steps {
+                script {
+                    def pids = startServers()
+
+                    waitForService('http://localhost:3000', 'frontend')
+
+                    withCredentials([string(credentialsId: 'CUCUMBER_PUBLISH_TOKEN', variable: 'CUCUMBER_TOKEN')]) {
+                        dir('functional-tests') {
+                            sh '''
+                                mvn test -Dheadless=true -Dcucumber.publish.token=${CUCUMBER_TOKEN} 
+                            '''
+                        }
+                    }
+
+                    stopServers(pids)
+                }
+            }
+
+            post {
+                always {
+                    archiveArtifacts artifacts: 'functional-tests/target/extent-report/**/*', fingerprint: true
+                    publishHTML(target: [
+                        allowMissing: false,
+                        alwaysLinkToLastBuild: true,
+                        keepAll: true,
+                        reportDir: 'functional-tests/target/extent-report',
+                        reportFiles: 'all-pages-report.html',
+                        reportName: 'Test Report: Functional Testing'
+                    ])
+                }
+            }
+        }
     }
 
     post {
@@ -98,7 +140,41 @@ pipeline {
     }
 }
 
-// Function to handle success case
+// utility function to start servers
+def startServers() {
+    def pids = [:]
+
+    pids.frontend = sh(script: 'npm run dev & echo $!', returnStdout: true).trim()
+
+    return pids
+}
+
+// utility function to wait for a service to be ready
+def waitForService(url, serviceName) {
+    sh """#!/bin/bash
+        TRIES_REMAINING=30
+        echo "Waiting for ${serviceName} to be ready at ${url}..."
+        while ! curl --output /dev/null --silent "${url}"; do
+            TRIES_REMAINING=\$((TRIES_REMAINING - 1))
+            if [ \$TRIES_REMAINING -le 0 ]; then
+                echo "ERROR: ${serviceName} did not start within expected time."
+                exit 1
+            fi
+            echo "waiting for ${serviceName}..."
+            sleep 5
+        done
+        echo "***${serviceName} is ready***"
+    """
+}
+
+// utility function to stop servers
+def stopServers(pids) {
+    pids.each { key, pid ->
+        sh "kill ${pid} || true"
+    }
+}
+
+// function to handle success case
 def handleSuccess() {
     if (env.BRANCH_NAME == "${STAGING_BRANCH}") {
         def JWT = generateJWT()
@@ -107,7 +183,7 @@ def handleSuccess() {
     }
 }
 
-// Function to handle failure case
+// function to handle failure case
 def handleFailure() {
     echo 'The pipeline failed. Reverting last PR.'
     def JWT = generateJWT()
@@ -115,7 +191,7 @@ def handleFailure() {
     revertLastPullRequest(GITHUB_TOKEN)
 }
 
-// Function to generate JWT
+// function to generate jwt
 def generateJWT() {
     def now = sh(script: 'date +%s', returnStdout: true).trim()
     def iat = (now.toInteger() - 60).toString()
@@ -142,7 +218,7 @@ def generateJWT() {
     """, returnStdout: true).trim()
 }
 
-// Function to retrieve access token
+// function to retrieve access token
 def retrieveAccessToken(JWT) {
     def tokenResponse = httpRequest(
         url: "https://api.github.com/app/installations/${GITHUB_APP_INSTALLATION}/access_tokens",
@@ -163,7 +239,7 @@ def retrieveAccessToken(JWT) {
     }
 }
 
-// Function to create pull request
+// function to create pull request
 def createPullRequest(GITHUB_TOKEN) {
     def pullResponse = httpRequest(
         url: "https://api.github.com/repos/${GITHUB_REPO}/pulls",
@@ -196,7 +272,7 @@ def createPullRequest(GITHUB_TOKEN) {
     }
 }
 
-// Function to request reviewers for the pull request
+// function to request reviewers for the pull request
 def requestReviewers(GITHUB_TOKEN, prNumber) {
     def reviewerResponse = httpRequest(
         url: "https://api.github.com/repos/${GITHUB_REPO}/pulls/${prNumber}/requested_reviewers",
@@ -221,7 +297,7 @@ def requestReviewers(GITHUB_TOKEN, prNumber) {
     }
 }
 
-// Function to revert last pull request
+// function to revert last pull request
 def revertLastPullRequest(GITHUB_TOKEN) {
     def getPullResponse = httpRequest(
         url: "https://api.github.com/repos/${GITHUB_REPO}/commits/${env.GIT_COMMIT}/pulls",
@@ -250,7 +326,7 @@ def revertLastPullRequest(GITHUB_TOKEN) {
     }
 }
 
-// Function to revert the pull request via GraphQL
+// function to revert the pull request via graphql
 def revertPullRequest(prNumber, prNodeId, prTitle, GITHUB_TOKEN) {
     return httpRequest(
         url: 'https://api.github.com/graphql',
@@ -296,7 +372,7 @@ def revertPullRequest(prNumber, prNodeId, prTitle, GITHUB_TOKEN) {
     )
 }
 
-// Function to handle the revert response
+// function to handle the revert response
 def handleRevertResponse(revertResponse, prNumber, prAuthor, GITHUB_TOKEN) {
     if (revertResponse.status == 400) {
         def jsonResponse = readJSON text: revertResponse.content
@@ -314,15 +390,15 @@ def handleRevertResponse(revertResponse, prNumber, prAuthor, GITHUB_TOKEN) {
     }
 }
 
-// Function to request reviewers for the reverted pull request
+// function to request reviewers for the reverted pull request
 def requestReviewersForRevert(prAuthor, GITHUB_TOKEN, jsonResponse) {
     def revertPrNumber = jsonResponse.data.revertPullRequest.revertPullRequest.number
     def revertReviewers = "${GITHUB_REVIEWER_USERNAMES}"
 
-    // Convert the comma-separated string into a list of trimmed usernames (removing quotes and extra spaces)
+    // convert the comma-separated string into a list of trimmed usernames (removing quotes and extra spaces)
     def reviewerList = revertReviewers.split(',').collect { it.trim().replaceAll('"', '') }
 
-    // Check if prAuthor is not already in the list
+    // check if prauthor is not already in the list
     if (!reviewerList.contains(prAuthor) && prAuthor != null && prAuthor != 'jenkins_broadly') {
         revertReviewers += ", \"${prAuthor}\""
     }
