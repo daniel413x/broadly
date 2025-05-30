@@ -3,7 +3,7 @@ pipeline {
 
     tools {
         // your Jenkins nodejs installation must be named '18.0.0' for this to match
-        nodejs '18.0.0'
+        nodejs '18.20.2'
     }
 
     environment {
