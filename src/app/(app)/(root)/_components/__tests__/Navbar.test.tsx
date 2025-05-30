@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import Navbar from "@/app/(root)/_components/Navbar";
+import Navbar from "@/app/(app)/(root)/_components/Navbar";
 
 describe("Navbar", () => {
   it("opens the mobile sidebar", async () => {
