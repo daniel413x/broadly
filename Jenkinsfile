@@ -49,12 +49,10 @@ pipeline {
         stage('Build Frontend') {
             steps {
                 withCredentials([string(credentialsId: 'PAYLOAD_DATABASE_URI', variable: 'DATABASE_URI'), string(credentialsId: 'PAYLOAD_SECRET', variable: 'PAYLOAD_SECRET')]) {
-                    dir('client') {
-                        sh '''
-                        node -v
-                        npm install && npm run build
-                        '''
-                    }
+                    sh '''
+                    node -v
+                    npm install && npm run build
+                    '''
                 }
             }
         }
@@ -95,19 +93,19 @@ pipeline {
         stage('Perform Functional Tests') {
             steps {
                 script {
-                    def pids = startServers()
+                    withCredentials([string(credentialsId: 'CUCUMBER_PUBLISH_TOKEN', variable: 'CUCUMBER_TOKEN'), string(credentialsId: 'PAYLOAD_DATABASE_URI', variable: 'DATABASE_URI'), string(credentialsId: 'PAYLOAD_SECRET', variable: 'PAYLOAD_SECRET')]) {
+                        script {
+                            def pids = startServers()
 
-                    waitForService('http://localhost:3000', 'frontend')
-
-                    withCredentials([string(credentialsId: 'CUCUMBER_PUBLISH_TOKEN', variable: 'CUCUMBER_TOKEN')]) {
-                        dir('functional-tests') {
-                            sh '''
-                                mvn test -Dheadless=true -Dcucumber.publish.token=${CUCUMBER_TOKEN} 
-                            '''
+                            waitForService('http://localhost:3000', 'frontend')
+                                dir('functional-tests') {
+                                    sh '''
+                                        mvn test -Dheadless=true -Dcucumber.publish.token=${CUCUMBER_TOKEN} 
+                                    '''
+                                }
+                            stopServers(pids)
                         }
                     }
-
-                    stopServers(pids)
                 }
             }
 
