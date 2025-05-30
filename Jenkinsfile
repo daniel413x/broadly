@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        // your Jenkins nodejs installation must be named '18.0.0' for this to match
+        // your Jenkins nodejs installation must be named '18.x.x' for this to match
         nodejs '18.20.2'
     }
 
@@ -19,6 +19,10 @@ pipeline {
         GITHUB_APP_CLIENT_ID = credentials('GITHUB_APP_CLIENT_ID')
         // could be single repo, e.g. daniel413x/broadly, or organization, e.g. repos/My-Budget-Buddy/Budget-Buddy-UserService
         GITHUB_REPO = 'daniel413x/broadly'
+        // just a mongodb connection string
+        // this could end up being the primary database for the project
+        PAYLOAD_DATABASE_URI = credentials('PAYLOAD_DATABASE_URI')
+        PAYLOAD_SECRET = credentials('PAYLOAD_SECRET')
         // generated/obtained via GH App settings page
         PEM = credentials('GITHUB_APP_PEM')
     }
@@ -44,11 +48,13 @@ pipeline {
 
         stage('Build Frontend') {
             steps {
-                dir('client') {
-                    sh '''
-                    node -v
-                    npm install && npm run build
-                    '''
+                withCredentials([string(credentialsId: 'PAYLOAD_DATABASE_URI', variable: 'DATABASE_URI'), string(credentialsId: 'PAYLOAD_SECRET', variable: 'PAYLOAD_SECRET')]) {
+                    dir('client') {
+                        sh '''
+                        node -v
+                        npm install && npm run build
+                        '''
+                    }
                 }
             }
         }
