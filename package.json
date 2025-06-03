@@ -9,7 +9,8 @@
     "lint": "next lint",
     "test": "jest",
     "test:watch": "jest --watch",
-    "generate:types": "payload generate:types"
+    "generate:types": "payload generate:types",
+    "db:fresh": "payload migrage:fresh"
   },
   "dependencies": {
     "@payloadcms/db-mongodb": "^3.39.1",
