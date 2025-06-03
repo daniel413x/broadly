@@ -68,6 +68,7 @@ export default defineConfig([
 
       "no-unused-vars": "off",
       "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
+      "@typescript-eslint/no-explicit-any": "off",
 
       "comma-dangle": ["error", {
         arrays: "always-multiline",
