@@ -3,6 +3,10 @@ import { getPayload } from "payload";
 
 const categories = [
   {
+    name: "All",
+    slug: "all",
+  },
+  {
     name: "Business & Money",
     color: "#FFB347",
     slug: "business-money",
@@ -136,7 +140,7 @@ const seed = async () => {
   const payload = await getPayload({
     config: configPromise,
   });
-  for (const category of categories) {
+  await Promise.all(categories.map(async (category) => {
     const parentCategory = await payload.create({
       collection: "categories",
       data: {
@@ -146,17 +150,19 @@ const seed = async () => {
         parent: null,
       },
     });
-    for (const subCategory of category.subcategories || []) {
-      await payload.create({
-        collection: "categories",
-        data: {
-          name: subCategory.name,
-          slug: subCategory.slug,
-          parent: parentCategory.id,
-        },
-      });
+    if (category.subcategories && category.subcategories.length > 0) {
+      await Promise.all(category.subcategories.map(async (subCategory) => {
+        await payload.create({
+          collection: "categories",
+          data: {
+            name: subCategory.name,
+            slug: subCategory.slug,
+            parent: parentCategory.id,
+          },
+        });
+      }));
     }
-  }
+  }));
 };
 
 await seed();
