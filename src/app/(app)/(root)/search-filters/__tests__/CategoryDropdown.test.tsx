@@ -61,7 +61,7 @@ describe("CategoryDropdown", () => {
         isNavigationHovered={false}
       />
     );
-    const button = screen.getByRole("button");
+    const button = screen.getByRole("link");
     expect(button).toHaveClass("bg-white");
     expect(button).toHaveClass("border-primary");
   });
@@ -74,8 +74,8 @@ describe("CategoryDropdown", () => {
         isNavigationHovered={false}
       />
     );
-    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-    const wrapper = screen.getByRole("button").closest("div")?.parentElement!;
+     
+    const wrapper = screen.getByTestId("electronics-category-dropdown").parentElement!;
     expect(screen.getByTestId("subcategory-menu")).toHaveTextContent("Closed");
     await userEvent.hover(wrapper);
     expect(screen.getByTestId("subcategory-menu")).toHaveTextContent("Open");
@@ -101,8 +101,8 @@ describe("CategoryDropdown", () => {
         isNavigationHovered={false}
       />
     );
-    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-    const wrapper = screen.getByRole("button").closest("div")?.parentElement!;
+     
+    const wrapper = screen.getByTestId("electronics-category-dropdown").parentElement!;
     await userEvent.hover(wrapper);
     const triangle = wrapper.querySelector("div[class*='border-b']");
     expect(triangle).toHaveClass("opacity-100");
