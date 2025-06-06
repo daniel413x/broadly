@@ -50,6 +50,7 @@ const CategoryDropdown = ({
     >
       <div className="relative">
         <Button
+          data-testid={`${category.slug}-category-dropdown`}
           asChild
           variant="elevated"
           className={cn("h-11 px-4 bg-transparent border-transparent rounded-full hover:bg-white hover:border-primary text-black",
