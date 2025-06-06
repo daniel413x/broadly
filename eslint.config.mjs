@@ -9,6 +9,7 @@ import pluginJsxA11y from "eslint-plugin-jsx-a11y";
 import pluginReactHooks from "eslint-plugin-react-hooks";
 import {
   defineConfig,
+  globalIgnores,
 } from "eslint/config";
 import {
   FlatCompat,
@@ -26,7 +27,9 @@ const compat = new FlatCompat({
 });
 
 export default defineConfig([
-
+  globalIgnores([
+    "src/app/(payload)/**/*"
+  ]),
   ...compat.extends("next/core-web-vitals", "next/typescript", "plugin:@next/next/recommended"),
   // jest block
   {
