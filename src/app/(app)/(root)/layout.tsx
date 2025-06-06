@@ -5,7 +5,7 @@ import Navbar from "./_components/Navbar";
 import { Metadata } from "next";
 import Footer from "./_components/Footer";
 import SearchFilters from "./search-filters";
-import { Category } from "@/payload-types";
+import { NoDocCategory } from "@/lib/data/types";
 
 export const metadata: Metadata = {
   title: "Home",
@@ -31,13 +31,14 @@ const RootLayout = async ({
         exists: false,
       },
     },
+    sort: "name",
   });
-  const formattedData = data.docs.map((doc) => ({
+  const formattedData: NoDocCategory[] = data.docs.map((doc) => ({
     ...doc,
     subcategories: (doc.subcategories?.docs ?? []).map((doc) => ({
       // Payload does not have type safety fully implemented yet
       // with depth: 1 you can be confident that docs will be of type Category
-      ...(doc as Category),
+      ...(doc as NoDocCategory),
     })),
   }));
   return (
