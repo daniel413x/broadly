@@ -69,7 +69,7 @@ pipeline {
                             -Dsonar.organization=daniel413x \
                             -Dsonar.sources=src \
                             -Dsonar.exclusions=**/__tests__/**,src/test/** \
-                            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+                            -Dsonar.javascript.lcov.reportPaths=./coverage/lcov.info
                         '''
                     }
                 }
