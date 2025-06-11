@@ -26,7 +26,7 @@ describe("CategoryDropdown", () => {
         id: "2",
         name: "Phones",
         slug: "phones",
-        subcategories: [],
+        subcategories: undefined,
         createdAt: "",
         updatedAt: "",
       },

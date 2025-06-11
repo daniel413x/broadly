@@ -2,28 +2,26 @@
 
 import { useEffect, useRef, useState } from "react";
 import CategoryDropdown from "./CategoryDropdown";
-import { NoDocCategory } from "@/lib/data/types";
 import { Button } from "@/components/ui/common/shadcn/button";
 import { cn } from "@/lib/utils";
 import { ListFilterIcon } from "lucide-react";
 import CategoriesSidebar from "./CategoriesSidebar";
+import { useTRPC } from "@/trpc/client";
+import { useQuery } from "@tanstack/react-query";
 
-interface CategoriesProps {
-  data: NoDocCategory[];
-}
-
-const Categories = ({
-  data,
-}: CategoriesProps) => {
+const Categories = () => {
+  const trpc = useTRPC();
+  const { data } = useQuery(trpc.categories.getMany.queryOptions());
+  const categories = data || [];
   const containerRef = useRef<HTMLDivElement>(null);
   const measureRef = useRef<HTMLDivElement>(null);
   const viewAllRef = useRef<HTMLDivElement>(null);
-  const [visibleCount, setVisibleCount] = useState<number>(data.length);
+  const [visibleCount, setVisibleCount] = useState<number>(categories.length);
   const [isAnyHovered, setIsAnyHovered] = useState<boolean>(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
-  const dataByVisibleCount = data.slice(0, visibleCount);
+  const dataByVisibleCount = categories.slice(0, visibleCount);
   const activeCategory = "all";
-  const activeCategoryIndex = data.findIndex((cat) => cat.slug === activeCategory);
+  const activeCategoryIndex = categories.findIndex((cat) => cat.slug === activeCategory);
   const isActiveCategoryHidden = activeCategoryIndex >= visibleCount && activeCategoryIndex !== -1;
   // dynamically slice the fetched catagory array according to a calculation of the total width of the items
   // and whether they will fit into their container
@@ -51,7 +49,7 @@ const Categories = ({
     const resizeObserver = new ResizeObserver(calculateVisible);
     resizeObserver.observe(containerRef.current!);
     return () => resizeObserver.disconnect();
-  }, [data.length]);
+  }, [categories.length]);
   const containerOnMouseEnter = () => {
     setIsAnyHovered(true);
   };
@@ -64,7 +62,6 @@ const Categories = ({
   return (
     <div className="relative w-full">
       <CategoriesSidebar
-        data={data}
         open={isSidebarOpen}
         onOpenChange={toggleIsSidebarOpen}
       />
@@ -74,7 +71,7 @@ const Categories = ({
         className="absolute opacity-0 pointer-events-none flex"
         style={{ position: "fixed", top: -9999, left: -9999 }}
       >
-        {data.map((category) => (
+        {categories.map((category) => (
           <div key={category.id}>
             <CategoryDropdown
               category={category}

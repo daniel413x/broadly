@@ -5,11 +5,11 @@ import { cn } from "@/lib/utils";
 import { useRef, useState } from "react";
 import useDropdownPosition from "./hooks/useDropdownPosition";
 import SubcategoryMenu from "./SubcategoryMenu";
-import { NoDocCategory } from "@/lib/data/types";
+import { CategoriesGetManyOutput } from "@/lib/data/types";
 import Link from "next/link";
 
 interface CategoryDropdownProps {
-  category: NoDocCategory;
+  category: CategoriesGetManyOutput[1];
   isActive: boolean;
   isNavigationHovered: boolean;
 }

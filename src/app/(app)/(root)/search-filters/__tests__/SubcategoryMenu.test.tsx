@@ -1,8 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import SubcategoryMenu from "../SubcategoryMenu";
-import { NoDocCategory } from "@/lib/data/types";
+import { CategoriesGetManyOutput } from "@/lib/data/types";
 
-const baseCategory: NoDocCategory = {
+const baseCategory: CategoriesGetManyOutput[1] = {
   id: "1",
   name: "Parent Category",
   slug: "parent-category",
@@ -37,7 +37,7 @@ describe("SubcategoryMenu", () => {
   });
 
   it("renders subcategory links when isOpen is true and subcategories exist", () => {
-    const categoryWithSubs: NoDocCategory = {
+    const categoryWithSubs: CategoriesGetManyOutput[1] = {
       ...baseCategory,
       color: "#ABCDEF",
       subcategories: [
@@ -46,14 +46,14 @@ describe("SubcategoryMenu", () => {
           id: "2",
           name: "Subcat 1",
           slug: "subcat-1",
-          subcategories: [],
+          subcategories: undefined,
         },
         {
           ...baseCategory,
           id: "3",
           name: "Subcat 2",
           slug: "subcat-2",
-          subcategories: [],
+          subcategories: undefined,
         },
       ],
     };
