@@ -1,11 +1,10 @@
-import configPromise from "@payload-config";
-import { getPayload } from "payload";
-import { ReactNode } from "react";
+import { ReactNode, Suspense } from "react";
 import Navbar from "./_components/Navbar";
 import { Metadata } from "next";
 import Footer from "./_components/Footer";
-import SearchFilters from "./search-filters";
-import { NoDocCategory } from "@/lib/data/types";
+import SearchFilters, { SearchFiltersLoading } from "./search-filters";
+import { getQueryClient, trpc } from "@/trpc/server";
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
 export const metadata: Metadata = {
   title: "Home",
@@ -18,34 +17,19 @@ interface RootLayoutProps {
 const RootLayout = async ({
   children,
 }: RootLayoutProps) => {
-  const payload = await getPayload({
-    config: configPromise,
-  });
-  const data = await payload.find({
-    collection: "categories",
-    depth: 1,
-    // there should never be too many categories to justify pagination
-    pagination: false,
-    where: {
-      parent: {
-        exists: false,
-      },
-    },
-    sort: "name",
-  });
-  const formattedData: NoDocCategory[] = data.docs.map((doc) => ({
-    ...doc,
-    subcategories: (doc.subcategories?.docs ?? []).map((doc) => ({
-      // Payload does not have type safety fully implemented yet
-      // with depth: 1 you can be confident that docs will be of type Category
-      ...(doc as NoDocCategory),
-    })),
-  }));
+  const queryClient = getQueryClient();
+  void queryClient.prefetchQuery(
+    trpc.categories.getMany.queryOptions()
+  );
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
       <aside aria-label="Search bar">
-        <SearchFilters data={formattedData} />
+        <HydrationBoundary state={dehydrate(queryClient)}>
+          <Suspense fallback={<SearchFiltersLoading />}>
+            <SearchFilters />
+          </Suspense>
+        </HydrationBoundary>
       </aside>
       <div className="flex-1 bg-[#F4F4F0]">
         {children}

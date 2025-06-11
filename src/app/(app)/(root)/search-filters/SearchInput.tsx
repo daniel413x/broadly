@@ -1,7 +1,6 @@
 "use client";
 
 import { Input } from "@/components/ui/common/shadcn/input";
-import { NoDocCategory } from "@/lib/data/types";
 import { ListFilterIcon, SearchIcon } from "lucide-react";
 import CategoriesSidebar from "./CategoriesSidebar";
 import { useState } from "react";
@@ -9,12 +8,10 @@ import { Button } from "@/components/ui/common/shadcn/button";
 
 interface SearchInputProps {
   disabled?: boolean;
-  data: NoDocCategory[];
 }
 
 const SearchInput = ({
   disabled,
-  data,
 }: SearchInputProps) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
   const openSidebar = () => {
@@ -23,7 +20,6 @@ const SearchInput = ({
   return (
     <div className="flex items-center gap-2 w-full">
       <CategoriesSidebar
-        data={data}
         open={isSidebarOpen}
         onOpenChange={setIsSidebarOpen}
       />
