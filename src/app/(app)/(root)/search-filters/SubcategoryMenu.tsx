@@ -1,8 +1,8 @@
-import { NoDocCategory } from "@/lib/data/types";
+import { CategoriesGetManyOutput } from "@/lib/data/types";
 import Link from "next/link";
 
 interface SubcategoryMenuProps {
-  category: NoDocCategory;
+  category: CategoriesGetManyOutput[1];
   isOpen: boolean;
   position: { top: number; left: number; }
 }
@@ -31,7 +31,7 @@ const SubcategoryMenu = ({
         style={{ backgroundColor }}
       >
         <div>
-          {category.subcategories?.map((subcategory: NoDocCategory) => (
+          {category.subcategories?.map((subcategory) => (
             <Link
               key={subcategory.slug}
               className="w-full text-left p-4 hover:bg-black hover:text-white flex justify-between items-center underline font-medium"

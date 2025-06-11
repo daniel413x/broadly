@@ -1,4 +1,5 @@
-async function Home() {
+function Home() {
+  
   return (
     <main className="flex flex-col gap-y-4 p-6">
       <h1>

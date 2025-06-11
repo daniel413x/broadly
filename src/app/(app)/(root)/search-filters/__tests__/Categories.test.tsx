@@ -1,8 +1,9 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import Categories from "../Categories";
-import { NoDocCategory } from "@/lib/data/types";
+import { CategoriesGetManyOutput } from "@/lib/data/types";
 
+// ✅ Mock ResizeObserver
 beforeAll(() => {
   global.ResizeObserver = class {
     observe() {}
@@ -11,28 +12,17 @@ beforeAll(() => {
   };
 });
 
-jest.mock("../CategoriesSidebar", () => ({
-  __esModule: true,
-  default: ({
-    open,
-    onOpenChange,
-    data,
-  }: {
-    open: boolean;
-    onOpenChange: (open: boolean) => void;
-    data: NoDocCategory[];
-  }) => (
-    <div data-testid="categories-sidebar">
-      {open ? "Sidebar Open" : "Sidebar Closed"}
-      <button onClick={() => onOpenChange(false)}>Close Sidebar</button>
-      {data.map((cat) => (
-        <div key={cat.id}>{cat.name}</div>
-      ))}
-    </div>
-  ),
+jest.mock("next/navigation", () => ({
+  useRouter: () => ({
+    push: jest.fn(),
+    replace: jest.fn(),
+    refresh: jest.fn(),
+    prefetch: jest.fn(),
+  }),
 }));
 
-const mockData: NoDocCategory[] = [
+// ✅ Mock TRPC & React Query
+const mockData: CategoriesGetManyOutput[1][] = [
   {
     id: "1",
     name: "Cat A",
@@ -59,10 +49,53 @@ const mockData: NoDocCategory[] = [
   },
 ];
 
-describe("Categories", () => {
+jest.mock("@/trpc/client", () => ({
+  useTRPC: () => ({
+    categories: {
+      getMany: {
+        queryOptions: () => ({
+          queryKey: ["categories.getMany"],
+          queryFn: async () => mockData,
+        }),
+      },
+    },
+  }),
+}));
 
+jest.mock("@tanstack/react-query", () => {
+  const actual = jest.requireActual("@tanstack/react-query");
+  return {
+    ...actual,
+    useQuery: () => ({
+      data: mockData,
+      isLoading: false,
+      isError: false,
+    }),
+  };
+});
+
+// ✅ Mock CategoriesSidebar
+jest.mock("../CategoriesSidebar", () => ({
+  __esModule: true,
+  default: ({
+    open,
+    onOpenChange,
+  }: {
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
+  }) => (
+    <div data-testid="categories-sidebar">
+      {open ? "Sidebar Open" : "Sidebar Closed"}
+      <button onClick={() => onOpenChange(false)}>Close Sidebar</button>
+    </div>
+  ),
+}));
+
+describe("Categories (with TRPC)", () => {
+
+  // this is probably not a useful test
   it("opens and closes the sidebar via View All button and close action", async () => {
-    render(<Categories data={mockData} />);
+    render(<Categories />);
     expect(screen.getByTestId("categories-sidebar")).toHaveTextContent("Sidebar Closed");
 
     const viewAllButton = screen.getByRole("button", { name: /view all/i });
@@ -77,14 +110,27 @@ describe("Categories", () => {
   });
 
   it("highlights View All button if active category is hidden", () => {
-    // artificially limit visible count by shrinking data array
-    const shortened = mockData.slice(0, 1);
-    render(<Categories data={shortened.concat(mockData[2])} />); // include "all" at the end
+    Object.defineProperty(HTMLElement.prototype, "offsetWidth", {
+      configurable: true,
+      value: 100,
+    });
 
+    jest
+      .spyOn(HTMLElement.prototype, "getBoundingClientRect")
+      .mockImplementation(() => ({
+        width: 150, // Each category wider than available space
+        height: 0,
+        top: 0,
+        left: 0,
+        bottom: 0,
+        right: 0,
+        x: 0,
+        y: 0,
+        toJSON: () => {},
+      }));
+    render(<Categories />);
     const viewAll = screen.getByRole("button", { name: /view all/i });
-    // we can't test exact styles easily without snapshot or class names,
-    // but we can assert it exists and is interactive
     expect(viewAll).toBeInTheDocument();
+    // If you want to test classnames, add data-testid to the button and check .classList
   });
-
 });

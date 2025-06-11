@@ -1,8 +1,10 @@
 import {
   Sheet, SheetContent, SheetHeader, SheetTitle,
 } from "@/components/ui/common/shadcn/sheet";
-import { NoDocCategory } from "@/lib/data/types";
+import { CategoriesGetManyOutput } from "@/lib/data/types";
+import { useTRPC } from "@/trpc/client";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
+import { useQuery } from "@tanstack/react-query";
 import { ChevronLeftIcon, ChevronRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -10,17 +12,17 @@ import { useState } from "react";
 interface CategoriesSidebarProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  data: NoDocCategory[]; // TODO: remove later
 }
 
 const CategoriesSidebar = ({
   open,
   onOpenChange,
-  data,
 }: CategoriesSidebarProps) => {
+  const trpc = useTRPC();
+  const { data } = useQuery(trpc.categories.getMany.queryOptions());
   const router = useRouter();
-  const [parentCategories, setParentCategories] = useState<NoDocCategory[] | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<NoDocCategory | null>(null);
+  const [parentCategories, setParentCategories] = useState<CategoriesGetManyOutput | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<CategoriesGetManyOutput[1] | null>(null);
   // if there are parent categories, show those, otherwise, show root categories
   const currentCategories = parentCategories ?? data ?? [];
   const handleOpenChange = (bool: boolean) => {
@@ -28,9 +30,9 @@ const CategoriesSidebar = ({
     setParentCategories(null);
     onOpenChange(bool);
   };
-  const handleCategoryClick = (cat: NoDocCategory) => {
+  const handleCategoryClick = (cat: CategoriesGetManyOutput[1]) => {
     if (cat.subcategories && cat.subcategories.length > 0) {
-      setParentCategories(cat.subcategories);
+      setParentCategories(cat.subcategories as CategoriesGetManyOutput);
       setSelectedCategory(cat);
     } else {
       // this is a leaf category/no subcategories

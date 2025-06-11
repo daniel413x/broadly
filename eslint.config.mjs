@@ -28,7 +28,7 @@ const compat = new FlatCompat({
 
 export default defineConfig([
   globalIgnores([
-    "src/app/(payload)/**/*"
+    "src/app/(payload)/**/*",
   ]),
   ...compat.extends("next/core-web-vitals", "next/typescript", "plugin:@next/next/recommended"),
   // jest block
