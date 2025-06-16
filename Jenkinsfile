@@ -93,14 +93,14 @@ pipeline {
         stage('Perform Functional Tests') {
             steps {
                 script {
-                    withCredentials([string(credentialsId: 'CUCUMBER_PUBLISH_TOKEN', variable: 'CUCUMBER_TOKEN'), string(credentialsId: 'PAYLOAD_DATABASE_URI', variable: 'DATABASE_URI'), string(credentialsId: 'PAYLOAD_SECRET', variable: 'PAYLOAD_SECRET')]) {
+                    withCredentials([string(credentialsId: 'PAYLOAD_DATABASE_URI', variable: 'DATABASE_URI'), string(credentialsId: 'PAYLOAD_SECRET', variable: 'PAYLOAD_SECRET')]) {
                         script {
                             def pids = startServers()
 
                             waitForService('http://localhost:3000', 'frontend')
                                 dir('functional-tests') {
                                     sh '''
-                                        mvn test -Dheadless=true -Dcucumber.publish.token=${CUCUMBER_TOKEN} 
+                                        mvn test -Dheadless=true
                                     '''
                                 }
                             stopServers(pids)
