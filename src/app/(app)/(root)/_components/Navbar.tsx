@@ -102,7 +102,8 @@ const Navbar = () => {
           variant="secondary"
           className="border-l border-t-0 border-b-0 border-r-0 px-12 h-full rounded-none bg-white hover:bg-pink-400 transition-colors text-lg"
         >
-          <Link 
+          <Link
+            prefetch
             href={`/${routes.SIGN_IN_ROUTE}`}
           >
             Log in
@@ -113,6 +114,7 @@ const Navbar = () => {
           className="border-l border-t-0 border-b-0 border-r-0 px-12 h-full rounded-none bg-black hover:bg-pink-400 text-white hover:text-black transition-colors text-lg"
         >
           <Link
+            prefetch
             href={`/${routes.SIGN_UP_ROUTE}`}
           >
             Start selling

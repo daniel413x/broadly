@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Toaster } from "sonner";
 import { DM_Sans } from "next/font/google";
 import "./globals.css";
 import { ReactNode } from "react";
@@ -36,6 +37,7 @@ function RootLayout({
       >
         <TRPCReactProvider >
           {children}          
+          <Toaster visibleToasts={1} />
         </TRPCReactProvider>
       </body>
     </html>
