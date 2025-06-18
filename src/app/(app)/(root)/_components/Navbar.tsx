@@ -9,6 +9,8 @@ import { usePathname } from "next/navigation";
 import { ReactNode, useState } from "react";
 import NavbarSidebar from "./NavbarSidebar";
 import { MenuIcon } from "lucide-react";
+import { useTRPC } from "@/trpc/client";
+import { useQuery } from "@tanstack/react-query";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -69,6 +71,8 @@ const navbarItems = [
 ];
 
 const Navbar = () => {
+  const trpc = useTRPC();
+  const session = useQuery(trpc.auth.session.queryOptions());
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
   const toggleOpenSidebar = () => {
@@ -96,31 +100,47 @@ const Navbar = () => {
           </NavbarItem>
         ))}
       </div>
-      <div className="lg:flex hidden">
-        <Button
-          asChild
-          variant="secondary"
-          className="border-l border-t-0 border-b-0 border-r-0 px-12 h-full rounded-none bg-white hover:bg-pink-400 transition-colors text-lg"
-        >
-          <Link
-            prefetch
-            href={`/${routes.SIGN_IN_ROUTE}`}
+      {!session.data?.user ? (
+        <div className="lg:flex hidden">
+          <Button
+            asChild
+            variant="secondary"
+            className="border-l border-t-0 border-b-0 border-r-0 px-12 h-full rounded-none bg-white hover:bg-pink-400 transition-colors text-lg"
           >
-            Log in
-          </Link>
-        </Button>
-        <Button
-          asChild
-          className="border-l border-t-0 border-b-0 border-r-0 px-12 h-full rounded-none bg-black hover:bg-pink-400 text-white hover:text-black transition-colors text-lg"
-        >
-          <Link
-            prefetch
-            href={`/${routes.SIGN_UP_ROUTE}`}
+            <Link
+              prefetch
+              href={`/${routes.SIGN_IN_ROUTE}`}
+            >
+              Log in
+            </Link>
+          </Button>
+          <Button
+            asChild
+            className="border-l border-t-0 border-b-0 border-r-0 px-12 h-full rounded-none bg-black hover:bg-pink-400 text-white hover:text-black transition-colors text-lg"
           >
-            Start selling
-          </Link>
-        </Button>
-      </div>
+            <Link
+              prefetch
+              href={`/${routes.SIGN_UP_ROUTE}`}
+            >
+              Start selling
+            </Link>
+          </Button>
+        </div>
+      ) : (
+        <div className="lg:flex hidden">
+          <Button
+            asChild
+            variant="secondary"
+            className="border-l border-t-0 border-b-0 border-r-0 px-12 h-full rounded-none bg-white hover:bg-pink-400 transition-colors text-lg"
+          >
+            <Link
+              href={`/${routes.ADMIN_ROUTE}`}
+            >
+              Dashboard
+            </Link>
+          </Button>
+        </div>
+      )}
       <div className="flex lg:hidden items-center justify-center">
         <Button
           variant="ghost"

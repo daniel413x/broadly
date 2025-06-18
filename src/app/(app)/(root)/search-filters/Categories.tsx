@@ -7,11 +7,11 @@ import { cn } from "@/lib/utils";
 import { ListFilterIcon } from "lucide-react";
 import CategoriesSidebar from "./CategoriesSidebar";
 import { useTRPC } from "@/trpc/client";
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 
 const Categories = () => {
   const trpc = useTRPC();
-  const { data } = useQuery(trpc.categories.getMany.queryOptions());
+  const { data } = useSuspenseQuery(trpc.categories.getMany.queryOptions());
   const categories = data || [];
   const containerRef = useRef<HTMLDivElement>(null);
   const measureRef = useRef<HTMLDivElement>(null);
@@ -71,6 +71,7 @@ const Categories = () => {
         className="absolute opacity-0 pointer-events-none flex"
         style={{ position: "fixed", top: -9999, left: -9999 }}
       >
+        {/* HYDRATION ERROR */}
         {categories.map((category) => (
           <div key={category.id}>
             <CategoryDropdown
@@ -88,6 +89,7 @@ const Categories = () => {
         onMouseEnter={containerOnMouseEnter}
         onMouseLeave={containerOnMouseLeave}
       >
+        {/* HYDRATION ERROR */}
         {dataByVisibleCount.map((category) => (
           <div key={category.id}>
             <CategoryDropdown
