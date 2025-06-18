@@ -18,6 +18,7 @@ const RootLayout = async ({
   children,
 }: RootLayoutProps) => {
   const queryClient = getQueryClient();
+  // fetch categories data server-side
   void queryClient.prefetchQuery(
     trpc.categories.getMany.queryOptions()
   );
@@ -25,6 +26,7 @@ const RootLayout = async ({
     <div className="flex flex-col min-h-screen">
       <Navbar />
       <aside aria-label="Search bar">
+        {/* useSuspenseQuery to use hydrated cache and avoid hydration errors */}
         <HydrationBoundary state={dehydrate(queryClient)}>
           <Suspense fallback={<SearchFiltersLoading />}>
             <SearchFilters />

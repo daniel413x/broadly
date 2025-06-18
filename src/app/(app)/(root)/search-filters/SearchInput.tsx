@@ -1,10 +1,14 @@
 "use client";
 
 import { Input } from "@/components/ui/common/shadcn/input";
-import { ListFilterIcon, SearchIcon } from "lucide-react";
+import { BookmarkCheckIcon, ListFilterIcon, SearchIcon } from "lucide-react";
 import CategoriesSidebar from "./CategoriesSidebar";
 import { useState } from "react";
 import { Button } from "@/components/ui/common/shadcn/button";
+import { useTRPC } from "@/trpc/client";
+import { useQuery } from "@tanstack/react-query";
+import Link from "next/link";
+import { LIBRARY_ROUTE } from "@/lib/data/routes";
 
 interface SearchInputProps {
   disabled?: boolean;
@@ -14,6 +18,9 @@ const SearchInput = ({
   disabled,
 }: SearchInputProps) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
+  const trpc = useTRPC();
+  console.log(trpc);
+  const session = useQuery(trpc.auth.session.queryOptions());
   const openSidebar = () => {
     setIsSidebarOpen(true);
   };
@@ -34,7 +41,16 @@ const SearchInput = ({
       >
         <ListFilterIcon />
       </Button>
-      {/* TODO: add library button */}
+      {!session.data?.user ? null : (
+        <Button variant="elevated" asChild>
+          <Link
+            href={`/${LIBRARY_ROUTE}`}
+          >
+            <BookmarkCheckIcon />
+            Library
+          </Link>
+        </Button>
+      )}
     </div>
   );
 };

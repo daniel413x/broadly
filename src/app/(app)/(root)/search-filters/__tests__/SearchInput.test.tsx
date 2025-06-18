@@ -35,12 +35,27 @@ const mockData = [
 
 jest.mock("@/trpc/client", () => ({
   useTRPC: () => ({
+    auth: {
+      session: {
+        queryOptions: () => {},
+      },
+    },
     categories: {
       getMany: {
         queryOptions: () => ({
           queryKey: ["categories.getMany"],
           queryFn: async () => mockData,
         }),
+      },
+    },
+  }),
+}));
+
+jest.mock("@tanstack/react-query", () => ({
+  useQuery: () => ({
+    session: {
+      data: {
+        user: {},
       },
     },
   }),

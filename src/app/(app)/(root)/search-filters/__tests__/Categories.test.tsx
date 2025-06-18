@@ -66,7 +66,7 @@ jest.mock("@tanstack/react-query", () => {
   const actual = jest.requireActual("@tanstack/react-query");
   return {
     ...actual,
-    useQuery: () => ({
+    useSuspenseQuery: () => ({
       data: mockData,
       isLoading: false,
       isError: false,

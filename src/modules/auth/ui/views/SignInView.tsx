@@ -13,7 +13,7 @@ import { SIGN_UP_ROUTE } from "@/lib/data/routes";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/common/shadcn/form";
 import { Input } from "@/components/ui/common/shadcn/input";
 import { useTRPC } from "@/trpc/client";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 
 const poppins = Poppins({
@@ -26,6 +26,7 @@ export type SignupForm = z.infer<typeof loginSchema>;
 const SignInView = () => {
   const router = useRouter();
   const trpc = useTRPC();
+  const queryClient = useQueryClient();
   const login = useMutation(trpc.auth.login.mutationOptions());
   const form = useForm<SignupForm>({
     resolver: zodResolver(loginSchema),
@@ -39,7 +40,8 @@ const SignInView = () => {
       onError: (error) => {
         toast.error(error.message);
       },
-      onSuccess: () => {
+      onSuccess: async () => {
+        await queryClient.invalidateQueries(trpc.auth.session.queryFilter());
         router.push("/");
       },
     });
