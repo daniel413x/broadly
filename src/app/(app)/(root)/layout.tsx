@@ -1,8 +1,8 @@
 import { ReactNode, Suspense } from "react";
-import Navbar from "./_components/Navbar";
+import Navbar from "@/modules/home/ui/components/Navbar";
 import { Metadata } from "next";
-import Footer from "./_components/Footer";
-import SearchFilters, { SearchFiltersLoading } from "./search-filters";
+import Footer from "@/modules/home/ui/components/Footer";
+import SearchFilters, { SearchFiltersLoading } from "@/modules/home/ui/components/search-filters";
 import { getQueryClient, trpc } from "@/trpc/server";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
