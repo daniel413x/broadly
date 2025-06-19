@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useParams } from "next/navigation";
 import CategoryDropdown from "./CategoryDropdown";
 import { Button } from "@/components/ui/common/shadcn/button";
 import { cn } from "@/lib/utils";
@@ -20,7 +21,9 @@ const Categories = () => {
   const [isAnyHovered, setIsAnyHovered] = useState<boolean>(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
   const dataByVisibleCount = categories.slice(0, visibleCount);
-  const activeCategory = "all";
+  const params = useParams();
+  const categoryParam = params.category as string | undefined;
+  const activeCategory = categoryParam || "all";
   const activeCategoryIndex = categories.findIndex((cat) => cat.slug === activeCategory);
   const isActiveCategoryHidden = activeCategoryIndex >= visibleCount && activeCategoryIndex !== -1;
   // dynamically slice the fetched catagory array according to a calculation of the total width of the items
@@ -109,6 +112,7 @@ const Categories = () => {
                 "bg-white border-primary": isActiveCategoryHidden && !isAnyHovered,
               })}
             onClick={() => setIsSidebarOpen(true)}
+            variant="elevated"
           >
             View All
             <ListFilterIcon className="ml-2" />

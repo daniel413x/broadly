@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import NavbarSidebar from "@/app/(app)/(root)/_components/NavbarSidebar";
+import NavbarSidebar from "@/modules/home/ui/components/NavbarSidebar";
 
 describe("NavbarSidebar", () => {
   it("calls onOpenChange(false) when a link is clicked", async () => {
