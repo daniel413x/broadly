@@ -1,3 +1,6 @@
+// solve:
+// Error occurred prerendering page "/sign-in". Read more: https://nextjs.org/docs/messages/prerender-error
+// Error: Dynamic server usage: Route /sign-in couldn't be rendered statically because it used `headers`. See more info here: https://nextjs.org/docs/messages/dynamic-server-error
 export const dynamic = "force-dynamic";
 
 import SignUpView from "@/modules/auth/ui/views/SignUpView";
