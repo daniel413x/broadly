@@ -2,6 +2,10 @@ import type { CollectionConfig } from "payload";
 
 export const Categories: CollectionConfig = {
   slug: "categories",
+  admin: {
+    // use this property so that categories in the /admin dashboard dropdowns aren't just shown as their ID's
+    useAsTitle: "name",
+  },
   access: {
   },
   fields: [

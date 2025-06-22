@@ -8,3 +8,4 @@ export type NoDocCategory = Category & {
 };
 
 export type CategoriesGetManyOutput = inferRouterOutputs<AppRouter>["categories"]["getMany"];
+export type ProductsGetManyOutput = inferRouterOutputs<AppRouter>["products"]["getMany"];
