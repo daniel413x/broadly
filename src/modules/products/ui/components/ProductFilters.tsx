@@ -39,6 +39,8 @@ const ProductFilter = ({
 };
 
 const ProductFilters = () => {
+  // in useProductFilters, we use nuqs useQueryStates
+  // input handlers update query params automatically
   const [filters, setFilters] = useProductFilters();
   const onChange = (key: keyof typeof filters, value: unknown) => {
     setFilters({
@@ -46,6 +48,7 @@ const ProductFilters = () => {
       [key]: value,
     });
   };
+  // dynamically set any number of filters to null, clearing all filters
   const handleClickOnClear = () => {
     const resetObject = 
     Object.fromEntries(

@@ -4,13 +4,22 @@ import { Input } from "@/components/ui/common/shadcn/input";
 import { Label } from "@/components/ui/common/shadcn/label";
 import { ChangeEvent } from "react";
 
+// accept only 0-9 or decimal point
+const numericValueRegex = /[^0-9.]/g;
+
+// formats a string or number as a US currency string
+// e.g., return 1234.56 as "$1,234.56"
 export const formatAsCurrency = (value: string | number) => {
-  const numericValue = value.toString().replace(/[^0-9.]/g, "");
+  const numericValue = value.toString().replace(numericValueRegex, "");
   const parts = numericValue.split(".");
   const formattedValue = parts[0] + (parts.length > 1 ? "." + parts[1]?.slice(0, 2) : "");
-  if (!formattedValue) return "";
+  if (!formattedValue) {
+    return "";
+  };
   const numberValue = parseFloat(formattedValue);
-  if (isNaN(numberValue)) return "";
+  if (isNaN(numberValue)) {
+    return "";
+  };
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
@@ -33,11 +42,11 @@ const PriceFilter = ({
   onMaxPriceChange,
 }: PriceFilterProps) => {
   const handleMinPriceChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const numbericValue = e.target.value.replace(/[^0-9.]/g, "");
+    const numbericValue = e.target.value.replace(numericValueRegex, "");
     onMinPriceChange(numbericValue);
   };
   const handleMaxPriceChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const numbericValue = e.target.value.replace(/[^0-9.]/g, "");
+    const numbericValue = e.target.value.replace(numericValueRegex, "");
     onMaxPriceChange(numbericValue);
   };
   return (
