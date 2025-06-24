@@ -101,11 +101,11 @@ const Navbar = () => {
         ))}
       </div>
       {!session.data?.user ? (
-        <div className="lg:flex hidden">
+        <div className="lg:flex hidden min-w-0">
           <Button
             asChild
             variant="secondary"
-            className="border-l border-t-0 border-b-0 border-r-0 px-12 h-full rounded-none bg-white hover:bg-pink-400 transition-colors text-lg"
+            className="border-l border-t-0 border-b-0 border-r-0 px-12 h-full rounded-none bg-white hover:bg-pink-400 transition-colors text-lg min-w-0 shrink-1"
           >
             <Link
               prefetch
@@ -116,7 +116,7 @@ const Navbar = () => {
           </Button>
           <Button
             asChild
-            className="border-l border-t-0 border-b-0 border-r-0 px-12 h-full rounded-none bg-black hover:bg-pink-400 text-white hover:text-black transition-colors text-lg"
+            className="border-l border-t-0 border-b-0 border-r-0 px-12 h-full rounded-none bg-black hover:bg-pink-400 text-white hover:text-black transition-colors text-lg min-w-0 shrink-1"
           >
             <Link
               prefetch
