@@ -9,11 +9,26 @@ export const productsRouter = createTRPCRouter({
   getMany: baseProcedure
     .input(
       z.object({
+        // define query paramaters
         category: z.string().nullable().optional(),
+        minPrice: z.string().nullable().optional(),
+        maxPrice: z.string().nullable().optional(),
       })
     )
     .query(async ({ ctx, input }) => {
       const where: Where = {};
+      if (input.minPrice) {
+        where.price = {
+          ...where.price,
+          greater_than_equal: input.minPrice,
+        };
+      }
+      if (input.maxPrice) {
+        where.price = {
+          ...where.price,
+          less_than_equal: input.maxPrice,
+        };
+      }
       // if depth: 0 then we could use the id
       // but for this codebase, we are not doing that
       if (input.category) {

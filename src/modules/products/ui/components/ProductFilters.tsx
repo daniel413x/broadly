@@ -1,0 +1,87 @@
+"use client";
+
+import { cn } from "@/lib/utils";
+import { ChevronDownIcon, ChevronRightIcon } from "lucide-react";
+import { ReactElement, useState } from "react";
+import PriceFilter from "./PriceFilter";
+import { useProductFilters } from "../../hooks/useProductFilters";
+
+interface ProductFilterProps {
+  title: string;
+  children: ReactElement;
+  className?: string;
+}
+
+const ProductFilter = ({
+  title,
+  children,
+  className,
+}: ProductFilterProps) => {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const Icon = isOpen ? ChevronDownIcon : ChevronRightIcon;
+  return (
+    <div className={cn(
+      "p-4 border-b flex flex-col gap-2",
+      className
+    )}>
+      <button
+        className="flex items-center justify-between cursor-pointer"
+        onClick={() => setIsOpen((current) => !current)}
+      >
+        <p className="font-medium">
+          {title}
+        </p>
+        <Icon className="size-5" />
+      </button>
+      {isOpen ? children : null}
+    </div>
+  );
+};
+
+const ProductFilters = () => {
+  const [filters, setFilters] = useProductFilters();
+  const onChange = (key: keyof typeof filters, value: unknown) => {
+    setFilters({
+      ...filters,
+      [key]: value,
+    });
+  };
+  const handleClickOnClear = () => {
+    const resetObject = 
+    Object.fromEntries(
+      Object.keys(filters).map((key) => [key, null])
+    );
+    setFilters(resetObject);
+  };
+  const handleOnMinPriceChange = (value: string) => {
+    onChange("minPrice", value);
+  };
+  const handleOnMaxPriceChange = (value: string) => {
+    onChange("maxPrice", value);
+  };
+  return (
+    <div className="border rounded-md bg-white">
+      <div className="p-4 border-b flex items-center justify-between">
+        <p className="font-medium">
+          Filters
+        </p>
+        <button className="underline" onClick={handleClickOnClear} type="button">
+          Clear
+        </button>
+      </div>
+      <ProductFilter
+        title="Price"
+        className="border-b-0"
+      >
+        <PriceFilter
+          minPrice={filters.minPrice}
+          maxPrice={filters.maxPrice}
+          onMinPriceChange={handleOnMinPriceChange}
+          onMaxPriceChange={handleOnMaxPriceChange}
+        />
+      </ProductFilter>
+    </div>
+  );
+};
+
+export default ProductFilters;
