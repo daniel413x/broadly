@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { ChevronDownIcon, ChevronRightIcon } from "lucide-react";
 import { ReactElement, useState } from "react";
 import PriceFilter from "./PriceFilter";
-import { useProductFilters } from "../../hooks/useProductFilters";
+import { useProductFilters } from "@/modules/products/hooks/useProductFilters";
 
 interface ProductFilterProps {
   title: string;
@@ -42,6 +42,13 @@ const ProductFilters = () => {
   // in useProductFilters, we use nuqs useQueryStates
   // input handlers update query params automatically
   const [filters, setFilters] = useProductFilters();
+  // boolean to show/hide the clear button
+  const hasAnyFilters = Object.entries(filters).some(([_, value]) => {
+    if (typeof value === "string") {
+      return true;
+    }
+    return value !== null;
+  });
   const onChange = (key: keyof typeof filters, value: unknown) => {
     setFilters({
       ...filters,
@@ -68,9 +75,11 @@ const ProductFilters = () => {
         <p className="font-medium">
           Filters
         </p>
-        <button className="underline" onClick={handleClickOnClear} type="button">
-          Clear
-        </button>
+        {!hasAnyFilters ? null : (
+          <button className="underline" onClick={handleClickOnClear} type="button">
+            Clear
+          </button>
+        )}
       </div>
       <ProductFilter
         title="Price"
