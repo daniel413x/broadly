@@ -19,7 +19,6 @@ const SearchInput = ({
 }: SearchInputProps) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
   const trpc = useTRPC();
-  console.log(trpc);
   const session = useQuery(trpc.auth.session.queryOptions());
   const openSidebar = () => {
     setIsSidebarOpen(true);
