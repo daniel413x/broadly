@@ -4,7 +4,8 @@ import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { getQueryClient, trpc } from "@/trpc/server";
 import ProductList, { ProductListSkeleton } from "@/modules/products/ui/components/ProductList";
 import ProductFilters from "@/modules/products/ui/components/ProductFilters";
-import { loadProductFilters } from "@/modules/products/hooks/useProductFilters";
+import { loadProductFilters } from "@/modules/products/searchParams";
+import ProductSort from "@/modules/products/ui/components/ProductSort";
 
 interface CategoryPageProps {
   params: Promise<{
@@ -34,6 +35,12 @@ const CategoryPage = async ({
       </h1>
       <HydrationBoundary state={dehydrate(queryClient)}>
         <div className="p-4 lg:px-12 py-8 flex flex-col gap-4">
+          <div className="flex flex-col lg:flex-row lg:items-center gap-y-2 lg:gap-y-8 justify-between">
+            <p className="text-2xl font-medium">
+              Curated for you
+            </p>
+            <ProductSort />
+          </div>
           <div className="grid grid-cols-1 lg:grid-cols-6 xl:grid-cols-8 gap-y-6 gap-x-12">
             <div className="lg:col-span-2 xl:col-span-2">
               <ProductFilters />
