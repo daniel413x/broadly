@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { ChevronDownIcon, ChevronRightIcon } from "lucide-react";
 import { ReactElement, useState } from "react";
 import PriceFilter from "./PriceFilter";
+import TagsFilter from "./TagsFilter";
 import { useProductFilters } from "@/modules/products/hooks/useProductFilters";
 
 interface ProductFilterProps {
@@ -43,7 +44,13 @@ const ProductFilters = () => {
   // input handlers update query params automatically
   const [filters, setFilters] = useProductFilters();
   // boolean to show/hide the clear button
-  const hasAnyFilters = Object.entries(filters).some(([_, value]) => {
+  const hasAnyFilters = Object.entries(filters).some(([key, value]) => {
+    if (key === "sort") {
+      return false;
+    }
+    if (Array.isArray(value)) {
+      return value.length > 0;
+    }
     if (typeof value === "string") {
       return true;
     }
@@ -69,6 +76,9 @@ const ProductFilters = () => {
   const handleOnMaxPriceChange = (value: string) => {
     onChange("maxPrice", value);
   };
+  const handleOnTagsChange = (value: string[]) => {
+    onChange("tags", value);
+  };
   return (
     <div className="border rounded-md bg-white">
       <div className="p-4 border-b flex items-center justify-between">
@@ -83,13 +93,21 @@ const ProductFilters = () => {
       </div>
       <ProductFilter
         title="Price"
-        className="border-b-0"
       >
         <PriceFilter
           minPrice={filters.minPrice}
           maxPrice={filters.maxPrice}
           onMinPriceChange={handleOnMinPriceChange}
           onMaxPriceChange={handleOnMaxPriceChange}
+        />
+      </ProductFilter>
+      <ProductFilter
+        title="Tags"
+        className="border-b-0"
+      >
+        <TagsFilter
+          value={filters.tags}
+          onChange={handleOnTagsChange}
         />
       </ProductFilter>
     </div>

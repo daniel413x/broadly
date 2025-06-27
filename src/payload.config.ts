@@ -11,6 +11,7 @@ import { Users } from "./collections/Users";
 import { Media } from "./collections/Media";
 import { Categories } from "./collections/Categories";
 import { Products } from "./collections/Products";
+import { Tag } from "./collections/Tag";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -25,7 +26,7 @@ export default buildConfig({
   // the cookiePrefix can be accessed like so: ctx.db.config.cookiePrefix
   // https://github.com/payloadcms/payload/blob/84cb2b5819d5be44d6f54c37603ce9cedc55924b/packages/payload/src/auth/extractJWT.ts#L23
   cookiePrefix: "broadly",
-  collections: [Users, Media, Categories, Products],
+  collections: [Users, Media, Categories, Products, Tag],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || "",
   typescript: {
