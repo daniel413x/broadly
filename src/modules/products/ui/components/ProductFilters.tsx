@@ -48,13 +48,11 @@ const ProductFilters = () => {
     if (key === "sort") {
       return false;
     }
+    // handle tags
     if (Array.isArray(value)) {
       return value.length > 0;
     }
-    if (typeof value === "string") {
-      return true;
-    }
-    return value !== null;
+    return value;
   });
   const onChange = (key: keyof typeof filters, value: unknown) => {
     setFilters({
@@ -66,7 +64,7 @@ const ProductFilters = () => {
   const handleClickOnClear = () => {
     const resetObject = 
     Object.fromEntries(
-      Object.keys(filters).map((key) => [key, null])
+      Object.keys(filters).map((key) => key === "sort" ? [key, filters.sort] : [key, null])
     );
     setFilters(resetObject);
   };
@@ -86,7 +84,7 @@ const ProductFilters = () => {
           Filters
         </p>
         {!hasAnyFilters ? null : (
-          <button className="underline" onClick={handleClickOnClear} type="button">
+          <button className="underline cursor-pointer" onClick={handleClickOnClear} type="button">
             Clear
           </button>
         )}
