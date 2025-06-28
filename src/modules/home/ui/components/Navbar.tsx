@@ -89,17 +89,18 @@ const Navbar = () => {
           broadly
         </span>
       </Link>
-      <div className="items-center gap-4 hidden lg:flex ">
+      <ul className="items-center gap-4 hidden lg:flex ">
         {navbarItems.map((item) => (
-          <NavbarItem
-            href={item.href}
-            key={item.href}
-            isActive={pathname === item.href}
-          >
-            {item.children}
-          </NavbarItem>
+          <li key={item.href}>
+            <NavbarItem
+              href={item.href}
+              isActive={pathname === item.href}
+            >
+              {item.children}
+            </NavbarItem>
+          </li>
         ))}
-      </div>
+      </ul>
       {!session.data?.user ? (
         <div className="lg:flex hidden min-w-0">
           <Button
