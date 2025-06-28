@@ -14,7 +14,7 @@ const Categories = () => {
   const trpc = useTRPC();
   const { data } = useSuspenseQuery(trpc.categories.getMany.queryOptions());
   const categories = data || [];
-  const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLUListElement>(null);
   const measureRef = useRef<HTMLDivElement>(null);
   const viewAllRef = useRef<HTMLDivElement>(null);
   const [visibleCount, setVisibleCount] = useState<number>(categories.length);
@@ -85,7 +85,7 @@ const Categories = () => {
         ))}
       </div>
       {/* visible items */}
-      <div
+      <ul
         className="flex flex-nowrap items-center"
         ref={containerRef}
         onMouseEnter={containerOnMouseEnter}
@@ -93,31 +93,35 @@ const Categories = () => {
       >
         {/* TODO: hardcode "All" button */}
         {dataByVisibleCount.map((category) => (
-          <div key={category.id}>
-            <CategoryDropdown
-              category={category}
-              isActive={activeCategory === category.slug}
-              isNavigationHovered={isAnyHovered}
-            />
-          </div>
+          <li key={category.id}>
+            <div>
+              <CategoryDropdown
+                category={category}
+                isActive={activeCategory === category.slug}
+                isNavigationHovered={isAnyHovered}
+              />
+            </div>
+          </li>
         ))}
-        <div
-          ref={viewAllRef}
-          className="shrink-0"
-        >
-          <Button
-            className={cn("h-11 px-4 bg-transparent border-transparent rounded-full hover:bg-white hover:border-primary text-black",
-              {
-                "bg-white border-primary": isActiveCategoryHidden && !isAnyHovered,
-              })}
-            onClick={() => setIsSidebarOpen(true)}
-            variant="elevated"
+        <li>
+          <div
+            ref={viewAllRef}
+            className="shrink-0"
           >
-            View All
-            <ListFilterIcon className="ml-2" />
-          </Button>
-        </div>
-      </div>
+            <Button
+              className={cn("h-11 px-4 bg-transparent border-transparent rounded-full hover:bg-white hover:border-primary text-black",
+                {
+                  "bg-white border-primary": isActiveCategoryHidden && !isAnyHovered,
+                })}
+              onClick={() => setIsSidebarOpen(true)}
+              variant="elevated"
+            >
+              View All
+              <ListFilterIcon className="ml-2" />
+            </Button>
+          </div>
+        </li>
+      </ul>
     </div>
   );
 };

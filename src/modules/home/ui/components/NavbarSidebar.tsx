@@ -3,6 +3,7 @@ import {
   Sheet, SheetContent, SheetHeader, SheetTitle,
 } from "@/components/ui/common/shadcn/sheet";
 import { SIGN_IN_ROUTE, SIGN_UP_ROUTE } from "@/lib/data/routes";
+import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { ReactNode } from "react";
 
@@ -44,32 +45,37 @@ const NavbarSidebar = ({
           </SheetTitle>
         </SheetHeader>
         <ScrollArea className="flex flex-col overflow-y-auto h-full pb-2">
-          {items.map((item) => (
-            <Link
-              href={item.href}
-              key={item.href}
-              className={buttonStyle}
-              onClick={onClickLink}
-            >
-              {item.children}
-            </Link>
-          ))}
-          <div className="border-t">
-            <Link
-              className={buttonStyle}
-              href={`/${SIGN_IN_ROUTE}`}
-              onClick={onClickLink}
-            >
-              Log in
-            </Link>
-            <Link
-              className={buttonStyle}
-              href={`/${SIGN_UP_ROUTE}`}
-              onClick={onClickLink}
-            >
-              Start selling
-            </Link>
-          </div>
+          <ul>
+            {items.map((item) => (
+              <li key={item.href}>
+                <Link
+                  href={item.href}
+                  className={buttonStyle}
+                  onClick={onClickLink}
+                >
+                  {item.children}
+                </Link>
+              </li>
+            ))}
+            <li>
+              <Link
+                className={cn(buttonStyle, "border-t")}
+                href={`/${SIGN_IN_ROUTE}`}
+                onClick={onClickLink}
+              >
+                Log in
+              </Link>
+            </li>
+            <li>
+              <Link
+                className={buttonStyle}
+                href={`/${SIGN_UP_ROUTE}`}
+                onClick={onClickLink}
+              >
+                Start selling
+              </Link>
+            </li>
+          </ul>
         </ScrollArea>
       </SheetContent>
     </Sheet>
