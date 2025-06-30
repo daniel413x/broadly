@@ -1,8 +1,9 @@
-import { Category } from "@/payload-types";
+import { Category, Media } from "@/payload-types";
 import { baseProcedure, createTRPCRouter } from "@/trpc/init";
 import { Sort, Where } from "payload";
 import { z } from "zod";
 import { CURATED, HOT_AND_NEW, sortValues, TRENDING } from "../constants";
+import { DEFAULT_LIMIT } from "@/lib/data/constants";
 
 export const productsRouter = createTRPCRouter({
   // ctx being passed down is not native to tRPC
@@ -16,6 +17,8 @@ export const productsRouter = createTRPCRouter({
         maxPrice: z.string().nullable().optional(),
         tags: z.array(z.string()).nullable().optional(),
         sort: z.enum(sortValues).nullable().optional(),
+        cursor: z.number().default(1),
+        limit: z.number().default(DEFAULT_LIMIT),
       })
     )
     .query(async ({ ctx, input }) => {
@@ -90,7 +93,20 @@ export const productsRouter = createTRPCRouter({
         depth: 1, // populate "category", "image"
         where,
         sort,
+        page: input.cursor,
+        limit: input.limit,
       });
+      /*
+      can just do:
       return data;
+      but the query return must be modified in this case to handle images; see ProductCard
+      */
+      return {
+        ...data,
+        docs: data.docs.map((doc) => ({
+          ...doc,
+          image: doc.image as Media | null,
+        })),
+      };
     }),
 });
