@@ -2,8 +2,7 @@
 
 import { Button } from "@/components/ui/common/shadcn/button";
 import { cn } from "@/lib/utils";
-import { useRef, useState } from "react";
-import useDropdownPosition from "./hooks/useDropdownPosition";
+import { useState } from "react";
 import SubcategoryMenu from "./SubcategoryMenu";
 import { CategoriesGetManyOutput } from "@/lib/data/types";
 import Link from "next/link";
@@ -20,10 +19,6 @@ const CategoryDropdown = ({
   isNavigationHovered,
 }: CategoryDropdownProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-  const {
-    getDropdownPosition,
-  } = useDropdownPosition(dropdownRef);
   const onMouseEnter = () => {
     if (category.subcategories) {
       setIsOpen(true);
@@ -33,7 +28,6 @@ const CategoryDropdown = ({
     setIsOpen(false);
   };
   const renderPointer = category.subcategories && category.subcategories.length;
-  const dropdownPosition = getDropdownPosition();
   // TODO: implement for improving mobile
   // const toggleDropdown = () => {
   //   if (category.subcategories?.docs?.length) {
@@ -42,13 +36,13 @@ const CategoryDropdown = ({
   // };
   return (
     <div
-      ref={dropdownRef}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
       // onClick={toggleDropdown}
       data-testid="category-dropdown"
+      className="relative"
     >
-      <div className="relative">
+      <div>
         <Button
           data-testid={`${category.slug}-category-dropdown`}
           asChild
@@ -77,7 +71,6 @@ const CategoryDropdown = ({
       <SubcategoryMenu
         category={category}
         isOpen={isOpen}
-        position={dropdownPosition}
       />
     </div>
   );

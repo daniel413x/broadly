@@ -4,13 +4,11 @@ import Link from "next/link";
 interface SubcategoryMenuProps {
   category: CategoriesGetManyOutput[1];
   isOpen: boolean;
-  position: { top: number; left: number; }
 }
 
 const SubcategoryMenu = ({
   category,
   isOpen,
-  position,
 }: SubcategoryMenuProps) => {
   if (!isOpen || !category.subcategories || category.subcategories.length === 0) {
     return null;
@@ -18,11 +16,7 @@ const SubcategoryMenu = ({
   const backgroundColor = category.color || "#F5F5F5";
   return (
     <div
-      className="fixed z-100"
-      style={{
-        top: position.top,
-        left: position.left,
-      }}
+      className="absolute top-full left-0 z-100"
     >
       {/* extend mouse hover area */}
       <div className="h-3 w-60" />
