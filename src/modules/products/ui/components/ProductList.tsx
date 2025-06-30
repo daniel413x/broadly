@@ -22,6 +22,7 @@ const ProductList = ({ category }: ProductListProps) => {
     hasNextPage,
     isFetchingNextPage,
     fetchNextPage,
+    // in page.tsx, prefetching must be done with prefetchInfiniteQuery and not prefetchQuery
   } = useSuspenseInfiniteQuery(trpc.products.getMany.infiniteQueryOptions({
     category,
     ...filters,
