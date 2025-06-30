@@ -2,14 +2,6 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import CategoryDropdown from "../CategoryDropdown";
 
-jest.mock("../hooks/useDropdownPosition", () => ({
-  // solve TypeError: (0 , _useDropdownPosition.default) is not a function
-  __esModule: true,
-  default: () => ({
-    getDropdownPosition: () => ({ top: 100, left: 200 }),
-  }),
-}));
-
 jest.mock("../SubcategoryMenu", () => ({
   __esModule: true,
   default: ({ isOpen }: { isOpen: boolean }) =>
