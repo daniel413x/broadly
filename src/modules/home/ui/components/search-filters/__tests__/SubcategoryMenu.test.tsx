@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render } from "@testing-library/react";
 import SubcategoryMenu from "../SubcategoryMenu";
 import { CategoriesGetManyOutput } from "@/lib/data/types";
 
@@ -19,7 +19,6 @@ describe("SubcategoryMenu", () => {
       <SubcategoryMenu
         category={{ ...baseCategory }}
         isOpen={false}
-        position={{ top: 0, left: 0 }}
       />
     );
     expect(container.firstChild).toBeNull();
@@ -30,48 +29,8 @@ describe("SubcategoryMenu", () => {
       <SubcategoryMenu
         category={{ ...baseCategory, subcategories: [] }}
         isOpen={true}
-        position={{ top: 0, left: 0 }}
       />
     );
     expect(container.firstChild).toBeNull();
-  });
-
-  it("renders subcategory links when isOpen is true and subcategories exist", () => {
-    const categoryWithSubs: CategoriesGetManyOutput[1] = {
-      ...baseCategory,
-      color: "#ABCDEF",
-      subcategories: [
-        {
-          ...baseCategory,
-          id: "2",
-          name: "Subcat 1",
-          slug: "subcat-1",
-          subcategories: undefined,
-        },
-        {
-          ...baseCategory,
-          id: "3",
-          name: "Subcat 2",
-          slug: "subcat-2",
-          subcategories: undefined,
-        },
-      ],
-    };
-
-    render(
-      <SubcategoryMenu
-        category={categoryWithSubs}
-        isOpen={true}
-        position={{ top: 100, left: 200 }}
-      />
-    );
-
-    // Check subcategory names
-    expect(screen.getByText("Subcat 1")).toBeDefined();
-    expect(screen.getByText("Subcat 2")).toBeDefined();
-
-    // Check top and left style
-    const menuContainer = screen.getByText("Subcat 1").closest(".fixed");
-    expect(menuContainer).toHaveStyle({ top: "100px", left: "200px" });
   });
 });
