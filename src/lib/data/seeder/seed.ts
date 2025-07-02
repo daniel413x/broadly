@@ -140,29 +140,57 @@ const seed = async () => {
   const payload = await getPayload({
     config: configPromise,
   });
-  await Promise.all(categories.map(async (category) => {
-    const parentCategory = await payload.create({
-      collection: "categories",
-      data: {
-        name: category.name,
-        slug: category.slug,
-        color: category.color,
-        parent: null,
-      },
-    });
-    if (category.subcategories && category.subcategories.length > 0) {
-      await Promise.all(category.subcategories.map(async (subCategory) => {
+  await Promise.all(
+    [
+      // create admin superuser tenant
+      async () => {
         await payload.create({
-          collection: "categories",
+          collection: "tenants",
           data: {
-            name: subCategory.name,
-            slug: subCategory.slug,
-            parent: parentCategory.id,
+            name: "admin",
+            slug: "admin",
+            stripeAccountId: "admin",
           },
         });
-      }));
-    }
-  }));
+      },
+      // create admin superuser
+      async () => {
+        await payload.create({
+          collection: "users",
+          data: {
+            email: "admin@broadly.com",
+            username: "admin@broadly.com",
+            password: "admin",
+            roles: ["super-admin"],
+          },
+        });
+      },
+      // create Categories
+      ...categories.map(async (category) => {
+        const parentCategory = await payload.create({
+          collection: "categories",
+          data: {
+            name: category.name,
+            slug: category.slug,
+            color: category.color,
+            parent: null,
+          },
+        });
+        if (category.subcategories && category.subcategories.length > 0) {
+          await Promise.all(category.subcategories.map(async (subCategory) => {
+            await payload.create({
+              collection: "categories",
+              data: {
+                name: subCategory.name,
+                slug: subCategory.slug,
+                parent: parentCategory.id,
+              },
+            });
+          }));
+        }
+      }),
+    ]
+  );
 };
 
 await seed();
