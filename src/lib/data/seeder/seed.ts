@@ -1,6 +1,8 @@
 import configPromise from "@payload-config";
 import { getPayload } from "payload";
 
+let retrys = 5;
+
 const categories = [
   {
     name: "All",
@@ -140,57 +142,72 @@ const seed = async () => {
   const payload = await getPayload({
     config: configPromise,
   });
-  await Promise.all(
-    [
-      // create admin superuser tenant
-      async () => {
-        await payload.create({
-          collection: "tenants",
-          data: {
-            name: "admin",
-            slug: "admin",
-            stripeAccountId: "admin",
-          },
-        });
+  // transaction is a must to avoid "Unable to acquire IX lock."
+  // transactionID does not return null but rather throws an error if it fails
+  const transactionID = await payload.db.beginTransaction() as string;
+  try {
+    // create admin superuser tenant
+    const adminTenant = await payload.create({
+      collection: "tenants",
+      data: {
+        name: "admin",
+        slug: "admin",
+        stripeAccountId: "admin",
       },
-      // create admin superuser
-      async () => {
-        await payload.create({
-          collection: "users",
-          data: {
-            email: "admin@broadly.com",
-            username: "admin@broadly.com",
-            password: "admin",
-            roles: ["super-admin"],
+      req: { transactionID },
+    });
+    // create admin superuser
+    await payload.create({
+      collection: "users",
+      data: {
+        email: "admin@broadly.com",
+        username: "admin",
+        password: "admin",
+        roles: ["super-admin"],
+        tenants: [
+          {
+            tenant: adminTenant.id,
           },
-        });
+        ],
       },
-      // create Categories
-      ...categories.map(async (category) => {
-        const parentCategory = await payload.create({
-          collection: "categories",
-          data: {
-            name: category.name,
-            slug: category.slug,
-            color: category.color,
-            parent: null,
-          },
-        });
-        if (category.subcategories && category.subcategories.length > 0) {
-          await Promise.all(category.subcategories.map(async (subCategory) => {
-            await payload.create({
-              collection: "categories",
-              data: {
-                name: subCategory.name,
-                slug: subCategory.slug,
-                parent: parentCategory.id,
-              },
-            });
-          }));
-        }
-      }),
-    ]
-  );
+      req: { transactionID },
+    });
+    await Promise.all(categories.map(async (category) => {
+      const parentCategory = await payload.create({
+        collection: "categories",
+        data: {
+          name: category.name,
+          slug: category.slug,
+          color: category.color,
+          parent: null,
+        },
+        req: { transactionID },
+      });
+      if (category.subcategories && category.subcategories.length > 0) {
+        for (const subcategory of category.subcategories) {
+          await payload.create({
+            collection: "categories",
+            data: {
+              name: subcategory.name,
+              slug: subcategory.slug,
+              parent: parentCategory.id,
+            },
+            req: { transactionID },
+          });
+        };
+      }
+    }));
+    await payload.db.commitTransaction(transactionID);
+  } catch (error: any) {
+    // deal with recurrent errors that happen unpredictably with mongodb transactions in this context. additional error codes may need to be added
+    if (retrys > 0 && (error.code === 251 || error.code === 112)) { // 251: NoSuchTransaction, 112: WriteConflict
+      retrys = retrys - 1;
+      console.log(`Error code ${error.code} occured. Retrying ${retrys} more time${retrys > 1 ? "s" : ""}...`);
+      await seed();
+    } else {
+      await payload.db.rollbackTransaction(transactionID);
+    }
+  }
 };
 
 await seed();
