@@ -51,7 +51,7 @@ pipeline {
                 withCredentials([string(credentialsId: 'PAYLOAD_DATABASE_URI', variable: 'DATABASE_URI'), string(credentialsId: 'PAYLOAD_SECRET', variable: 'PAYLOAD_SECRET')]) {
                     sh '''
                     node -v
-                    npm install && npm run build
+                    bun install && bun run build
                     '''
                 }
             }
@@ -62,8 +62,8 @@ pipeline {
                 script {
                     withSonarQubeEnv('SonarCloud') {
                         sh '''
-                        npm run test -- --coverage
-                        npx sonar-scanner \
+                        bun run test -- --coverage
+                        bunx sonar-scanner \
                             -Dsonar.projectKey=daniel413x_broadly-client \
                             -Dsonar.projectName=broadly-client-unit-tests \
                             -Dsonar.organization=daniel413x \
@@ -148,7 +148,7 @@ pipeline {
 def startServers() {
     def pids = [:]
 
-    pids.frontend = sh(script: 'npm run dev & echo $! > dev.pid', returnStdout: true).trim()
+    pids.frontend = sh(script: 'bun run dev & echo $! > dev.pid', returnStdout: true).trim()
 
     return pids
 }
