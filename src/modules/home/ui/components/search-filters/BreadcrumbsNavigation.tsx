@@ -29,7 +29,7 @@ const BreadcrumbsNavigation = ({
             </BreadcrumbItem>
             <BreadcrumbSeparator className="text-primary font-medium text-lg">
               /
-            </BreadcrumbSeparator> 
+            </BreadcrumbSeparator>
             <BreadcrumbItem>
               <BreadcrumbPage className="text-xl font-medium">
                 {activeSubcategoryName}

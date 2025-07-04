@@ -53,7 +53,7 @@ const TagsFilter = ({
           <LoaderIcon className="size-4 animate-spin" />
         </div>
       ) : (
-        data?.pages.map((page) => 
+        data?.pages.map((page) =>
           page.docs.map((tag) => (
             <Tag
               onChange={handleOnClickFilter}

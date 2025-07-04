@@ -5,7 +5,6 @@ export const categoriesRouter = createTRPCRouter({
   // ctx being passed down is not native to tRPC
   // see /trpc/init.ts to see how ctx is passed down
   getMany: baseProcedure.query(async ({ ctx }) => {
-
     const data = await ctx.db.find({
       collection: "categories",
       depth: 1,

@@ -7,7 +7,7 @@ import Navbar from "@/modules/home/ui/components/Navbar";
 Jest encountered an unexpected token
 
     Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-*/ 
+*/
 jest.mock("@/trpc/client", () => ({
   useTRPC: () => ({
     auth: {

@@ -79,7 +79,7 @@ jest.mock("../CategoriesSidebar", () => ({
     onOpenChange,
   }: {
     open: boolean;
-    onOpenChange: (open: boolean) => void;
+    onOpenChange: (bool: boolean) => void;
   }) => (
     <div data-testid="categories-sidebar">
       {open ? "Sidebar Open" : "Sidebar Closed"}
@@ -89,7 +89,6 @@ jest.mock("../CategoriesSidebar", () => ({
 }));
 
 describe("Categories (with TRPC)", () => {
-
   // this is probably not a useful test
   it("opens and closes the sidebar via View All button and close action", async () => {
     render(<Categories />);

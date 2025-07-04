@@ -6,7 +6,7 @@ const poppins = Poppins({
   subsets: ["latin"],
   weight: ["700"],
 });
- 
+
 const Footer = () => {
   return (
     <footer className="border-t font-medium bg-white">
@@ -19,7 +19,7 @@ const Footer = () => {
           className={cn("font-semibold text-2xl", poppins.className)}
         >
           broadly
-        </Link> 
+        </Link>
       </div>
     </footer>
   );
