@@ -7,8 +7,8 @@ interface ProductCardProps {
   id: string;
   name: string;
   imageUrl?: string | null;
-  authorUsername: string;
-  authorImageUrl?: string | null;
+  tenantUsername: string;
+  tenantImageUrl?: string | null;
   reviewRating: number;
   reviewCount: number;
   price: number;
@@ -18,8 +18,8 @@ const ProductCard = ({
   id,
   name,
   imageUrl,
-  authorUsername,
-  authorImageUrl,
+  tenantUsername,
+  tenantImageUrl,
   reviewRating,
   reviewCount,
   price,
@@ -56,14 +56,14 @@ const ProductCard = ({
             href="/user-shop"
           >
             <Image
-              src={authorImageUrl || "/author-avatar-placeholder.png"}
+              src={tenantImageUrl || "/author-avatar-placeholder.png"}
               alt=""
               width={16}
               height={16}
               className="rounded-full border shrink-0 size-[16px]"
             />
             <p className="text-sm underline font-medium">
-              {authorUsername}
+              {tenantUsername}
             </p>
           </Link>
           {!showReviews ? null : (
