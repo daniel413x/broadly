@@ -47,7 +47,7 @@ const rootCategories: CategoriesGetManyOutput[1][] = [
 ];
 
 jest.mock("@/trpc/client", () => ({
-  useTRPC: () => ({/*  */
+  useTRPC: () => ({
     categories: {
       getMany: {
         queryOptions: () => ({

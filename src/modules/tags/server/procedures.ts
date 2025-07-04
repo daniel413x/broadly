@@ -9,7 +9,7 @@ export const tagsRouter = createTRPCRouter({
     .input(
       z.object({
         // useInfiniteQuery infiniteQueryOptions depend on this being defined
-        // must be accessed in the query below 
+        // must be accessed in the query below
         cursor: z.number().default(1),
         limit: z.number().default(DEFAULT_LIMIT),
       })

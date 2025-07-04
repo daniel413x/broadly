@@ -5,7 +5,7 @@ import { CURATED, sortValues } from "./constants";
 
 const params = {
   sort: parseAsStringLiteral(sortValues).withDefault(CURATED),
-  // add default values to clear the query params cleanly from the url 
+  // add default values to clear the query params cleanly from the url
   minPrice:
     parseAsString.withOptions({ clearOnDefault: true }).withDefault(""),
   maxPrice:

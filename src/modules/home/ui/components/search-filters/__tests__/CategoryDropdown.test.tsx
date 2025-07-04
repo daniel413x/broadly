@@ -66,7 +66,7 @@ describe("CategoryDropdown", () => {
         isNavigationHovered={false}
       />
     );
-     
+
     const wrapper = screen.getByTestId("electronics-category-dropdown").parentElement!;
     expect(screen.getByTestId("subcategory-menu")).toHaveTextContent("Closed");
     await userEvent.hover(wrapper);
@@ -93,7 +93,7 @@ describe("CategoryDropdown", () => {
         isNavigationHovered={false}
       />
     );
-     
+
     const wrapper = screen.getByTestId("electronics-category-dropdown").parentElement!;
     await userEvent.hover(wrapper);
     const triangle = wrapper.querySelector("div[class*='border-b']");

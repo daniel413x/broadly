@@ -38,7 +38,7 @@ function RootLayout({
       >
         <NuqsAdapter>
           <TRPCReactProvider >
-            {children}          
+            {children}
             <Toaster visibleToasts={1} />
           </TRPCReactProvider>
         </NuqsAdapter>

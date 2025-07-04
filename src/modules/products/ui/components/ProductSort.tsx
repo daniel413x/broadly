@@ -20,7 +20,7 @@ const ProductSort = () => {
     setFilters({ sort: HOT_AND_NEW });
   };
   return (
-    <div 
+    <div
       className="flex items-center justify-between cursor-pointer relative">
       <Button
         size="sm"

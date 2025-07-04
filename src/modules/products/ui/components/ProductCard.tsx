@@ -24,7 +24,6 @@ const ProductCard = ({
   reviewCount,
   price,
 }: ProductCardProps) => {
-  reviewCount = 3;
   const showReviews = reviewCount > 0;
   const priceAsUsd = new Intl.NumberFormat("en-US", {
     style: "currency",

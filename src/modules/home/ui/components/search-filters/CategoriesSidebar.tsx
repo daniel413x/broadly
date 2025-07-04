@@ -38,12 +38,10 @@ const CategoriesSidebar = ({
       // this is a leaf category/no subcategories
       if (parentCategories && selectedCategory) {
         router.push(`/${selectedCategory.slug}/${cat.slug}`);
+      } else if (cat.slug === "all") {
+        router.push("/");
       } else {
-        if (cat.slug === "all") {
-          router.push("/");
-        } else {
-          router.push(`/${cat.slug}`);
-        }
+        router.push(`/${cat.slug}`);
       }
       handleOpenChange(false);
     }
