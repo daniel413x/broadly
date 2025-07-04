@@ -12,8 +12,8 @@ describe("NavbarSidebar", () => {
         open={true}
         onOpenChange={onOpenChangeMock}
       />
-    ); 
- 
+    );
+
     const closeButton = screen.getByText("navbarSidebarTestItem");
     await userEvent.click(closeButton);
 

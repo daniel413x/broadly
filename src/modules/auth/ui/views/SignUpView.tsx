@@ -91,7 +91,7 @@ const SignUpView = () => {
                   </FormControl>
                   <FormDescription
                     className={cn("hidden", {
-                      "block": showUsernamePreview,
+                      block: showUsernamePreview,
                     })}
                   >
                     Your store will be available at&nbsp;

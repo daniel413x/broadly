@@ -25,7 +25,7 @@ const layout = async ({
     <div className="min-h-screen bg-[#F4F4F4] flex flex-col">
       <HydrationBoundary state={dehydrate(queryClient)} >
         <Suspense fallback={<NavbarSkeleton />}>
-          <Navbar slug={slug} />      
+          <Navbar slug={slug} />
         </Suspense>
       </HydrationBoundary>
       <div className="flex-1">

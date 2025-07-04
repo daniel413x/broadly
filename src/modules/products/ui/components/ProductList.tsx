@@ -78,7 +78,7 @@ const ProductList = ({ category, narrowView, tenantSlug }: ProductListProps) => 
       </ul>
       <div className="flex justify-center pt-8">
         {!hasNextPage ? null : (
-          <Button 
+          <Button
             className="font-medium disabled:opacity-50 text-base bg-white"
             onClick={handleOnClickNextPage}
             disabled={isFetchingNextPage}

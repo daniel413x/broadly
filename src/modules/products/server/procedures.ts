@@ -8,6 +8,19 @@ import { DEFAULT_LIMIT } from "@/lib/data/constants";
 export const productsRouter = createTRPCRouter({
   // ctx being passed down is not native to tRPC
   // see /trpc/init.ts to see how ctx is passed down
+  getOne: baseProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const data = await ctx.db.findByID({
+        collection: "products",
+        id: input.id,
+      });
+      return data;
+    }),
   getMany: baseProcedure
     .input(
       z.object({

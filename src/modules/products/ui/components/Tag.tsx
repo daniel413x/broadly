@@ -17,7 +17,7 @@ const Tag = ({
   };
   const isChecked = value?.includes(tag.name);
   return (
-    <div 
+    <div
       className="flex items-center justify-between cursor-pointer relative">
       <button
         key={tag.id}
