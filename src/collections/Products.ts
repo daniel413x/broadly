@@ -37,6 +37,12 @@ export const Products: CollectionConfig = {
       type: "upload",
       relationTo: "media",
     },
+    // TODO? consider adding a cover image field so that you have separate fields for product card thumbnails and product page header covers
+    // {
+    //   name: "cover",
+    //   type: "upload",
+    //   relationTo: "media",
+    // },
     {
       name: "refundPolicy",
       type: "select",
