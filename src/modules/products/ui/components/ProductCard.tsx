@@ -1,4 +1,5 @@
 import { PRODUCTS_ROUTE } from "@/lib/data/routes";
+import { generateTenantURL } from "@/lib/utils";
 import { StarIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -9,6 +10,7 @@ interface ProductCardProps {
   imageUrl?: string | null;
   tenantUsername: string;
   tenantImageUrl?: string | null;
+  tenantSlug: string;
   reviewRating: number;
   reviewCount: number;
   price: number;
@@ -18,6 +20,7 @@ const ProductCard = ({
   id,
   name,
   imageUrl,
+  tenantSlug,
   tenantUsername,
   tenantImageUrl,
   reviewRating,
@@ -36,7 +39,7 @@ const ProductCard = ({
         <Link
           className="relative aspect-square"
           aria-label={`Go to the product page for ${name}`}
-          href={`/${PRODUCTS_ROUTE}/${id}`}
+          href={`/${generateTenantURL(tenantSlug)}/${PRODUCTS_ROUTE}/${id}`}
         >
           <Image
             alt=""
