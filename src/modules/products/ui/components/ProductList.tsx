@@ -64,6 +64,7 @@ const ProductList = ({ category, narrowView, tenantSlug }: ProductListProps) => 
               name={product.name}
               tenantUsername={product.tenant?.name}
               tenantImageUrl={product.tenant.image?.url}
+              tenantSlug={product.tenant.slug}
               reviewCount={50}
               reviewRating={3}
               /*

@@ -18,6 +18,9 @@
 /out/
 /.swc/
 
+# payload
+/media
+
 # production
 /build
 
