@@ -1,5 +1,5 @@
 import { PRODUCTS_ROUTE } from "@/lib/data/routes";
-import { generateTenantURL } from "@/lib/utils";
+import { formatCurrency, generateTenantURL } from "@/lib/utils";
 import { StarIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -28,11 +28,7 @@ const ProductCard = ({
   price,
 }: ProductCardProps) => {
   const showReviews = reviewCount > 0;
-  const priceAsUsd = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  }).format(Number(price));
+  const priceAsUsd = formatCurrency(price);
   return (
     <div>
       <div className="hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-shadow border rounded-md bg-white overflow-hidden h-full flex flex-col">

@@ -8,6 +8,7 @@ export const ADMIN_ROUTE = "admin";
 export const LIBRARY_ROUTE = "library";
 export const PRODUCTS_ROUTE = "products";
 export const TENANTS_ROUTE = "tenants";
+export const CHECKOUT_ROUTE = "checkout";
 
 export const API_ROUTE = "api";
 export const USERS_API_ROUTE = "users";

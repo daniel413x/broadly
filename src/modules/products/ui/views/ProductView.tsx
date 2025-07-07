@@ -2,7 +2,9 @@
 
 // TODO: implement ratings
 
+import { Fragment } from "react";
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import { useTRPC } from "@/trpc/client";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { formatCurrency, generateTenantURL } from "@/lib/utils";
@@ -10,8 +12,21 @@ import Link from "next/link";
 import StarRating from "@/components/ui/common/StarRating";
 import { Button } from "@/components/ui/common/shadcn/button";
 import { LinkIcon, StarIcon } from "lucide-react";
-import { Fragment } from "react";
 import { Progress } from "@/components/ui/common/shadcn/progress";
+
+const CartButtonLoading = () => {
+  return (
+    <Button disabled className="flex-1 bg-pink-400">
+      Add to cart
+    </Button>
+  );
+};
+
+// solve hydration for CartButton as there is conditional rendering based on the user's cart
+const CartButton = dynamic(() => import("@/components/ui/common/CartButton"), {
+  ssr: false,
+  loading: CartButtonLoading,
+});
 
 interface ProductViewProps {
   productId: string;
@@ -65,7 +80,7 @@ const ProductView = ({
                 </div>
               </div>
               <div className="px-6 py-4 flex items-center justify-center lg:border-r">
-                <Link href={generateTenantURL(tenantSlug)} className="flex items-center gap-2">
+                <Link href={`/${generateTenantURL(tenantSlug)}`} className="flex items-center gap-2">
                   {!tenantImageUrl ? null :(
                     <Image
                       src={tenantImageUrl}
@@ -116,12 +131,10 @@ const ProductView = ({
             <div className="border-t lg:border-t-0 lg:border-l h-full">
               <div className="flex flex-col gap-4 p-6 border-b">
                 <div className="flex flex-row items-center gap-2">
-                  <Button
-                    variant="elevated"
-                    className="flex-1 bg-pink-400"
-                  >
-                    Add to cart
-                  </Button>
+                  <CartButton
+                    productId={productId}
+                    tenantSlug={tenantSlug}
+                  />
                   <Button
                     className="size-12"
                     variant="elevated"
