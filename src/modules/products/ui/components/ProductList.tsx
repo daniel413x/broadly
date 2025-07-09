@@ -6,8 +6,8 @@ import { useProductFilters } from "@/modules/products/hooks/useProductFilters";
 import ProductCard, { ProductCardSkeleton } from "./ProductCard";
 import { DEFAULT_LIMIT } from "@/lib/data/constants";
 import { Button } from "@/components/ui/common/shadcn/button";
-import { InboxIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import NoProductsFound from "@/components/ui/common/NoProductsFound";
 
 interface ProductListProps {
   category?: string;
@@ -46,12 +46,7 @@ const ProductList = ({ category, narrowView, tenantSlug }: ProductListProps) => 
   const noProductsFound = data.pages?.[0]?.docs.length === 0;
   if (noProductsFound) {
     return (
-      <div className="border border-black border-dashed flex items-center justify-center p-8 flex-col gap-y-4 bg-white w-full rounded-lg">
-        <InboxIcon />
-        <p className="text-base font-medium">
-          No products found
-        </p>
-      </div>
+      <NoProductsFound />
     );
   }
   return (
