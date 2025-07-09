@@ -29,9 +29,9 @@ const CheckoutButton = ({
     ariaLabel = "Your cart. There are no items added.";
   }
   return (
-    <Button variant="elevated" asChild className={cn("bg-white", className)} aria-label={ariaLabel}>
+    <Button data-testid="checkout-button" variant="elevated" asChild className={cn("bg-white", className)} aria-label={ariaLabel}>
       <Link href={`/${generateTenantURL(tenantSlug)}/${CHECKOUT_ROUTE}`}>
-        <ShoppingCartIcon />
+        <ShoppingCartIcon data-testid="checkout-button-shoppingcart-icon" />
         {totalItems > 0 ? totalItems : ""}
       </Link>
     </Button>
