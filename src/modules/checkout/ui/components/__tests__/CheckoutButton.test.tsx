@@ -1,17 +1,18 @@
+import { vi, Mock } from "vitest";
 import { render, screen } from "@testing-library/react";
 import CheckoutButton from "../CheckoutButton";
 import { useCart } from "../../../hooks/useCart";
 
-jest.mock("../../../hooks/useCart", () => ({
-  useCart: jest.fn(),
+vi.mock("../../../hooks/useCart", () => ({
+  useCart: vi.fn(),
 }));
 
-jest.mock("@/lib/utils", () => ({
+vi.mock("@/lib/utils", () => ({
   cn: (...classes: string[]) => classes.join(" "),
   generateTenantURL: (tenantSlug: string) => `tenant/${tenantSlug}`,
 }));
 
-jest.mock("@/lib/data/routes", () => ({
+vi.mock("@/lib/data/routes", () => ({
   CHECKOUT_ROUTE: "checkout",
 }));
 
@@ -19,7 +20,7 @@ describe("CheckoutButton", () => {
   const tenantSlug = "test-tenant";
 
   it("renders correctly with items in the cart", () => {
-    (useCart as jest.Mock).mockReturnValue({ totalItems: 3 });
+    (useCart as Mock).mockReturnValue({ totalItems: 3 });
 
     render(<CheckoutButton tenantSlug={tenantSlug} />);
 
@@ -36,7 +37,7 @@ describe("CheckoutButton", () => {
   });
 
   it("renders correctly with no items in the cart", () => {
-    (useCart as jest.Mock).mockReturnValue({ totalItems: 0 });
+    (useCart as Mock).mockReturnValue({ totalItems: 0 });
 
     render(<CheckoutButton tenantSlug={tenantSlug} />);
 
@@ -53,7 +54,7 @@ describe("CheckoutButton", () => {
   });
 
   it("does not render when hideIfEmpty is true and cart is empty", () => {
-    (useCart as jest.Mock).mockReturnValue({ totalItems: 0 });
+    (useCart as Mock).mockReturnValue({ totalItems: 0 });
 
     const { container } = render(
       <CheckoutButton tenantSlug={tenantSlug} hideIfEmpty />
@@ -63,7 +64,7 @@ describe("CheckoutButton", () => {
   });
 
   it("renders correctly with one item in the cart", () => {
-    (useCart as jest.Mock).mockReturnValue({ totalItems: 1 });
+    (useCart as Mock).mockReturnValue({ totalItems: 1 });
 
     render(<CheckoutButton tenantSlug={tenantSlug} />);
 
@@ -73,5 +74,3 @@ describe("CheckoutButton", () => {
     expect(screen.getByText("1")).toBeInTheDocument();
   });
 });
-
-// We recommend installing an extension to run jest tests.
