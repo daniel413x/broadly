@@ -1,15 +1,16 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import SearchInput from "../SearchInput";
+import { vi } from "vitest";
 
 // ✅ Mock useRouter (for internal use in CategoriesSidebar)
 // solve invariant expected app router to be mounted
-jest.mock("next/navigation", () => ({
+vi.mock("next/navigation", () => ({
   useRouter: () => ({
-    push: jest.fn(),
-    replace: jest.fn(),
-    refresh: jest.fn(),
-    prefetch: jest.fn(),
+    push: vi.fn(),
+    replace: vi.fn(),
+    refresh: vi.fn(),
+    prefetch: vi.fn(),
   }),
 }));
 
@@ -33,7 +34,7 @@ const mockData = [
   },
 ];
 
-jest.mock("@/trpc/client", () => ({
+vi.mock("@/trpc/client", () => ({
   useTRPC: () => ({
     auth: {
       session: {
@@ -51,7 +52,7 @@ jest.mock("@/trpc/client", () => ({
   }),
 }));
 
-jest.mock("@tanstack/react-query", () => ({
+vi.mock("@tanstack/react-query", () => ({
   useQuery: () => ({
     session: {
       data: {
@@ -61,8 +62,8 @@ jest.mock("@tanstack/react-query", () => ({
   }),
 }));
 
-jest.mock("@tanstack/react-query", () => {
-  const actual = jest.requireActual("@tanstack/react-query");
+vi.mock("@tanstack/react-query", () => {
+  const actual = vi.importActual("@tanstack/react-query");
   return {
     ...actual,
     useQuery: () => ({

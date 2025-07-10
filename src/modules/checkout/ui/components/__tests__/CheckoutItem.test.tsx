@@ -1,8 +1,9 @@
 import { render, screen, fireEvent } from "@testing-library/react";
+import { vi } from "vitest";
 import CheckoutItem from "../CheckoutItem";
 
 describe("CheckoutItem", () => {
-  const mockOnRemove = jest.fn();
+  const mockOnRemove = vi.fn();
   const defaultProps = {
     id: "1",
     name: "Test Product",
@@ -17,9 +18,9 @@ describe("CheckoutItem", () => {
 
   it("renders the product name, tenant name, and price", () => {
     render(<CheckoutItem {...defaultProps} />);
-    expect(screen.getByText("Test Product")).toBeInTheDocument();
-    expect(screen.getByText("Test Tenant")).toBeInTheDocument();
-    expect(screen.getByText("$100")).toBeInTheDocument();
+    expect(screen.getByText("Test Product")).toBeDefined();
+    expect(screen.getByText("Test Tenant")).toBeDefined();
+    expect(screen.getByText("$100")).toBeDefined();
   });
 
   it("calls onRemove when the remove button is clicked", () => {
