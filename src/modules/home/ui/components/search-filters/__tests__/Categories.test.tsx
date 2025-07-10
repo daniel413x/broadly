@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import Categories from "../Categories";
 import { CategoriesGetManyOutput } from "@/lib/data/types";
+import { vi } from "vitest";
 
 // ✅ Mock ResizeObserver
 beforeAll(() => {
@@ -12,7 +13,7 @@ beforeAll(() => {
   };
 });
 
-jest.mock("next/navigation", () => ({
+vi.mock("next/navigation", () => ({
   useParams: () => ({
     categoryParam: "",
   }),
@@ -46,7 +47,7 @@ const mockData: CategoriesGetManyOutput[1][] = [
   },
 ];
 
-jest.mock("@/trpc/client", () => ({
+vi.mock("@/trpc/client", () => ({
   useTRPC: () => ({
     categories: {
       getMany: {
@@ -59,8 +60,8 @@ jest.mock("@/trpc/client", () => ({
   }),
 }));
 
-jest.mock("@tanstack/react-query", () => {
-  const actual = jest.requireActual("@tanstack/react-query");
+vi.mock("@tanstack/react-query", () => {
+  const actual = vi.importActual("@tanstack/react-query");
   return {
     ...actual,
     useSuspenseQuery: () => ({
@@ -72,7 +73,7 @@ jest.mock("@tanstack/react-query", () => {
 });
 
 // ✅ Mock CategoriesSidebar
-jest.mock("../CategoriesSidebar", () => ({
+vi.mock("../CategoriesSidebar", () => ({
   __esModule: true,
   default: ({
     open,
@@ -111,7 +112,7 @@ describe("Categories (with TRPC)", () => {
       value: 100,
     });
 
-    jest
+    vi
       .spyOn(HTMLElement.prototype, "getBoundingClientRect")
       .mockImplementation(() => ({
         width: 150, // Each category wider than available space
