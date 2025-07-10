@@ -38,13 +38,13 @@ pipeline {
             }
         }
 
-      stage('Pull Dependencies'){
-          steps{
-            sh '''
-            git clone https://github.com/daniel413x/broadly-functional-tests.git functional-tests
-            '''
-          }
-      }
+        stage('Pull Dependencies'){
+            steps{
+                sh '''
+                git clone https://github.com/daniel413x/broadly-functional-tests.git functional-tests
+                '''
+            }
+        }
 
         stage('Build Frontend') {
             steps {
