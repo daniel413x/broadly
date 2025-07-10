@@ -38,13 +38,22 @@ pipeline {
             }
         }
 
-        stage('Pull Dependencies'){
-            steps{
-                sh '''
-                git clone https://github.com/daniel413x/broadly-functional-tests.git functional-tests
-                '''
+        stage('Get Commit Message') {
+            steps {
+                script {
+                    def latestCommitMessage = sh(script: 'git log -1 --pretty=%s', returnStdout: true).trim()
+                    env.LATEST_COMMIT_MESSAGE = latestCommitMessage
+                }
             }
         }
+
+      stage('Pull Dependencies'){
+          steps{
+            sh '''
+            git clone https://github.com/daniel413x/broadly-functional-tests.git functional-tests
+            '''
+          }
+      }
 
         stage('Build Frontend') {
             steps {
@@ -245,6 +254,8 @@ def retrieveAccessToken(JWT) {
 
 // function to create pull request
 def createPullRequest(GITHUB_TOKEN) {
+    def title = env.LATEST_COMMIT_MESSAGE ?: "Automated PR: Pipeline successful"
+
     def pullResponse = httpRequest(
         url: "https://api.github.com/repos/${GITHUB_REPO}/pulls",
         httpMode: 'POST',
@@ -255,7 +266,7 @@ def createPullRequest(GITHUB_TOKEN) {
         contentType: 'APPLICATION_JSON',
         requestBody: """
             {
-                "title": "Automated PR: Pipeline successful",
+                "title": "${title}",
                 "head": "${STAGING_BRANCH}",
                 "base": "${MAIN_BRANCH}",
                 "body": "This pull request was created automatically after a successful pipeline run."
