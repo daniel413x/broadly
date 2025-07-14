@@ -5,11 +5,8 @@ import Stripe from "stripe";
 import configPromise from "@payload-config";
 import { ExpandedLineItem } from "@/modules/checkout/types";
 
-const wtf = "@@@@@@@@@@@@@ @@@@@@@@@@@@@@@@@@@ @@@@@@@@@@@@@@@@@@@ @@@@@@@@@@@@@@@@@@@";
-
 export async function POST(req: Request) {
   let event: Stripe.Event;
-  console.log(wtf);
   try {
     event = stripe.webhooks.constructEvent(
       await (await req.blob()).text(),
@@ -26,7 +23,6 @@ export async function POST(req: Request) {
       }
     );
   }
-  console.log("permittedEvents");
   const permittedEvents: string[] = [
     "checkout.session.completed",
   ];
@@ -35,7 +31,6 @@ export async function POST(req: Request) {
     try {
       switch (event.type) {
         case "checkout.session.completed": {
-          console.log("checkout.session.completed");
           const data = event.data.object as Stripe.Checkout.Session;
           // user ID is required to know who actually made the purchase
           if (!data.metadata?.userId) {
@@ -58,9 +53,7 @@ export async function POST(req: Request) {
             throw new Error("No line items found");
           }
           const lineItems = expandedSession.line_items.data as ExpandedLineItem[];
-          console.log(lineItems);
           await Promise.all((lineItems.map(async (lineItem) => {
-            console.log(lineItem);
             await payload.create({
               collection: "orders",
               data: {
