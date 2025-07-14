@@ -1,5 +1,5 @@
 import { vi } from "vitest";
-import { render, screen, fireEvent, cleanup } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import CheckoutSidebar from "../CheckoutSidebar";
 
 describe("CheckoutSidebar", () => {
