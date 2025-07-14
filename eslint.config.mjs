@@ -116,7 +116,7 @@ export default defineConfig([
       "no-multi-spaces": ["error", {
         ignoreEOLComments: false,
       }],
-      indent: ["error", 2],
+      indent: ["error", 2, { SwitchCase: 1 }],
       quotes: ["error", "double"],
       semi: ["error", "always"],
       "max-len": "off",
