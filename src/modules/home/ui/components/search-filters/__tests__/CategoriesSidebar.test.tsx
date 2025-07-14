@@ -2,9 +2,10 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import CategoriesSidebar from "../CategoriesSidebar";
 import { CategoriesGetManyOutput } from "@/lib/data/types";
+import { vi } from "vitest";
 
-const pushMock = jest.fn();
-jest.mock("next/navigation", () => ({
+const pushMock = vi.fn();
+vi.mock("next/navigation", () => ({
   useRouter: () => ({
     push: pushMock,
   }),
@@ -46,7 +47,7 @@ const rootCategories: CategoriesGetManyOutput[1][] = [
   },
 ];
 
-jest.mock("@/trpc/client", () => ({
+vi.mock("@/trpc/client", () => ({
   useTRPC: () => ({
     categories: {
       getMany: {
@@ -59,8 +60,8 @@ jest.mock("@/trpc/client", () => ({
   }),
 }));
 
-jest.mock("@tanstack/react-query", () => {
-  const actual = jest.requireActual("@tanstack/react-query");
+vi.mock("@tanstack/react-query", () => {
+  const actual = vi.importActual("@tanstack/react-query");
   return {
     ...actual,
     useQuery: () => ({
@@ -72,7 +73,7 @@ jest.mock("@tanstack/react-query", () => {
 });
 
 describe("CategoriesSidebar (with TRPC)", () => {
-  const onOpenChangeMock = jest.fn();
+  const onOpenChangeMock = vi.fn();
 
   beforeEach(() => {
     pushMock.mockClear();

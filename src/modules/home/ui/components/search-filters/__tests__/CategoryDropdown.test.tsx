@@ -1,8 +1,9 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import CategoryDropdown from "../CategoryDropdown";
+import { describe, it, expect, vi } from "vitest";
 
-jest.mock("../SubcategoryMenu", () => ({
+vi.mock("../SubcategoryMenu", () => ({
   __esModule: true,
   default: ({ isOpen }: { isOpen: boolean }) =>
     <div data-testid="subcategory-menu">{isOpen ? "Open" : "Closed"}</div>,

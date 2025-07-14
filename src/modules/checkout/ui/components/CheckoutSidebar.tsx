@@ -28,7 +28,7 @@ const CheckoutSidebar = ({
         )}
       </div>
       <div className="p-4 flex items-centr justify-center">
-        <Button disabled={isPending} size="lg" onClick={onCheckout} variant="elevated" className="text-base w-full text-white bg-primary hover:bg-pink-400 hover:text-primary">
+        <Button data-testid="checkout-button" disabled={isPending} size="lg" onClick={onCheckout} variant="elevated" className="text-base w-full text-white bg-primary hover:bg-pink-400 hover:text-primary">
           Checkout
         </Button>
       </div>
