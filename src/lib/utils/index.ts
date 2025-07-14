@@ -19,4 +19,3 @@ export function formatCurrency(
     maximumFractionDigits: 0,
   }).format(Number(value));
 }
-

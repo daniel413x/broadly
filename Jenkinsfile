@@ -1,3 +1,30 @@
+/*
+
+in case it is ever necessary to add other specific credentials for a certain stage,
+
+you can dynamically add strings to the sharedCredentials array in the course of a stage block like this:
+
+{
+            steps {
+                script {
+                    def stageSpecificCredentials = sharedCredentials + [
+                        string(credentialsId: 'SPECIAL_API_KEY', variable: 'SPECIAL_API_KEY')
+                    ]
+
+                    withCredentials(stageSpecificCredentials) {
+                        sh 'echo "Using additional secure credential $SPECIAL_API_KEY"'
+                    }
+                }
+            }
+
+*/
+def commonCredentials = [
+    string(credentialsId: 'PAYLOAD_DATABASE_URI', variable: 'DATABASE_URI'),
+    string(credentialsId: 'PAYLOAD_SECRET', variable: 'PAYLOAD_SECRET'),
+    string(credentialsId: 'STRIPE_SECRET_KEY', variable: 'STRIPE_SECRET_KEY'),
+    string(credentialsId: 'STRIPE_WEBHOOK_SECRET', variable: 'STRIPE_WEBHOOK_SECRET')
+]
+
 pipeline {
     agent any
 
@@ -20,7 +47,6 @@ pipeline {
         // could be single repo, e.g. daniel413x/broadly, or organization, e.g. repos/My-Budget-Buddy/Budget-Buddy-UserService
         GITHUB_REPO = 'daniel413x/broadly'
         // just a mongodb connection string
-        // this could end up being the primary database for the project
         PAYLOAD_DATABASE_URI = credentials('PAYLOAD_DATABASE_URI')
         PAYLOAD_SECRET = credentials('PAYLOAD_SECRET')
         // generated/obtained via GH App settings page
@@ -47,17 +73,17 @@ pipeline {
             }
         }
 
-      stage('Pull Dependencies'){
-          steps{
-            sh '''
-            git clone https://github.com/daniel413x/broadly-functional-tests.git functional-tests
-            '''
-          }
-      }
+        stage('Pull Dependencies') {
+            steps {
+                sh '''
+                git clone https://github.com/daniel413x/broadly-functional-tests.git functional-tests
+                '''
+            }
+        }
 
         stage('Build Frontend') {
             steps {
-                withCredentials([string(credentialsId: 'PAYLOAD_DATABASE_URI', variable: 'DATABASE_URI'), string(credentialsId: 'PAYLOAD_SECRET', variable: 'PAYLOAD_SECRET')]) {
+                withCredentials(commonCredentials) {
                     sh '''
                     node -v
                     bun install && bun run build
@@ -102,7 +128,7 @@ pipeline {
         stage('Perform Functional Tests') {
             steps {
                 script {
-                    withCredentials([string(credentialsId: 'PAYLOAD_DATABASE_URI', variable: 'DATABASE_URI'), string(credentialsId: 'PAYLOAD_SECRET', variable: 'PAYLOAD_SECRET')]) {
+                    withCredentials(commonCredentials) {
                         script {
                             def pids = startServers()
 

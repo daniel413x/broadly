@@ -1,4 +1,4 @@
-import { parseAsBoolean, useQueryStates } from "nuqs"
+import { parseAsBoolean, useQueryStates } from "nuqs";
 
 export const useCheckoutStates = () => {
   return useQueryStates({
@@ -9,4 +9,4 @@ export const useCheckoutStates = () => {
       clearOnDefault: true,
     }),
   });
-}
+};
