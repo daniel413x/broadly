@@ -1,3 +1,4 @@
+import { ReactNode } from "react";
 import { render, screen, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import * as ReactQuery from "@tanstack/react-query";
@@ -5,8 +6,12 @@ import CheckoutView from "../CheckoutView";
 import { toast } from "sonner";
 import { useCart } from "../../../hooks/useCart";
 import { useTRPC } from "@/trpc/client";
-import { ReactNode } from "react";
 import { vi, Mock } from "vitest";
+import { withNuqsTestingAdapter } from "nuqs/adapters/testing";
+
+vi.mock("next/navigation", () => ({
+  useRouter: vi.fn(),
+}));
 
 // solve: frustratingly rendering only the loading state
 vi.mock("@tanstack/react-query", async (importOriginal) => {
@@ -28,13 +33,42 @@ vi.mock("sonner", () => ({
 const mockUseQuery = ReactQuery.useQuery as unknown as Mock;
 const mockUseCart = useCart as Mock;
 const mockUseTRPC = useTRPC as Mock;
-// const mockUseQuery = useQuery as Mock;
+
+const mockBasicState = () => {
+  mockUseCart.mockReturnValue({
+    productIds: [],
+    clearAllCarts: vi.fn(),
+    removeProduct: vi.fn(),
+  });
+  mockUseTRPC.mockReturnValue({
+    checkout: {
+      getProducts: {
+        queryOptions: vi.fn(),
+      },
+      purchase: {
+        mutationOptions: vi.fn(),
+      },
+    },
+  });
+  mockUseQuery.mockReturnValue({
+    data: {
+      docs: [],
+    },
+    error: undefined,
+    isLoading: false,
+  });
+};
 
 const queryClient = new QueryClient();
 
 const renderWithProviders = (ui: ReactNode) => {
   return render(
-    <QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>
+    <QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>,
+    {
+      // solve:
+      // Error: [nuqs] nuqs requires an adapter to work with your framework.
+      wrapper: withNuqsTestingAdapter(),
+    }
   );
 };
 
@@ -44,18 +78,7 @@ describe("CheckoutView", () => {
   });
 
   it("renders loading state", () => {
-    mockUseCart.mockReturnValue({
-      productIds: [],
-      clearAllCarts: vi.fn(),
-      removeProduct: vi.fn(),
-    });
-    mockUseTRPC.mockReturnValue({
-      checkout: {
-        getProducts: {
-          queryOptions: vi.fn(),
-        },
-      },
-    });
+    mockBasicState();
     mockUseQuery.mockReturnValue({
       data: {
         docs: [],
@@ -70,25 +93,7 @@ describe("CheckoutView", () => {
   });
 
   it("renders no products found state", async () => {
-    mockUseCart.mockReturnValue({
-      productIds: [],
-      clearAllCarts: vi.fn(),
-      removeProduct: vi.fn(),
-    });
-    mockUseTRPC.mockReturnValue({
-      checkout: {
-        getProducts: {
-          queryOptions: vi.fn(),
-        },
-      },
-    });
-    mockUseQuery.mockReturnValue({
-      data: {
-        docs: [],
-      },
-      error: undefined,
-      isLoading: false,
-    });
+    mockBasicState();
 
     renderWithProviders(<CheckoutView tenantSlug="test-tenant" />);
 
@@ -98,6 +103,7 @@ describe("CheckoutView", () => {
   });
 
   it("renders products and sidebar", async () => {
+    mockBasicState();
     mockUseCart.mockReturnValue({
       productIds: ["1", "2"],
       clearAllCarts: vi.fn(),
@@ -109,7 +115,14 @@ describe("CheckoutView", () => {
           {
             id: "1",
             name: "Product 1",
-            image: { url: "/product1.png" },
+            image: { url: "/product.png" },
+            tenant: { slug: "tenant1", name: "Tenant 1" },
+            price: 100,
+          },
+          {
+            id: "2",
+            name: "Product 2",
+            image: { url: "/product.png" },
             tenant: { slug: "tenant1", name: "Tenant 1" },
             price: 100,
           },
@@ -118,13 +131,6 @@ describe("CheckoutView", () => {
       },
       error: undefined,
       isLoading: false,
-    });
-    mockUseTRPC.mockReturnValue({
-      checkout: {
-        getProducts: {
-          queryOptions: vi.fn(),
-        },
-      },
     });
 
     renderWithProviders(<CheckoutView tenantSlug="test-tenant" />);
@@ -136,10 +142,10 @@ describe("CheckoutView", () => {
   });
 
   it("clears cart and shows warning on NOT_FOUND error", async () => {
-    const clearAllCartsMock = vi.fn();
+    const clearCartMock = vi.fn();
     mockUseCart.mockReturnValue({
       productIds: ["1", "2"],
-      clearAllCarts: clearAllCartsMock,
+      clearCart: clearCartMock,
       removeProduct: vi.fn(),
     });
     mockUseQuery.mockReturnValue({
@@ -170,13 +176,16 @@ describe("CheckoutView", () => {
         getProducts: {
           queryOptions: vi.fn(),
         },
+        purchase: {
+          mutationOptions: vi.fn(),
+        },
       },
     });
 
     renderWithProviders(<CheckoutView tenantSlug="test-tenant" />);
 
     await waitFor(() => {
-      expect(clearAllCartsMock).toHaveBeenCalled();
+      expect(clearCartMock).toHaveBeenCalled();
       expect(toast.warning).toHaveBeenCalledWith(
         "Invalid products found, cart cleared"
       );

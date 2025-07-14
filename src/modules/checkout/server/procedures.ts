@@ -6,7 +6,6 @@ import { z } from "zod";
 import { CheckoutMetadata, ProductMetadata } from "../types";
 import { usdToInteger } from "../utils";
 import { stripe } from "@/lib/stripe";
-import { generateTenantURL } from "@/lib/utils";
 import { CHECKOUT_ROUTE, TENANTS_ROUTE } from "@/lib/data/routes";
 
 export const checkoutRouter = createTRPCRouter({
@@ -32,10 +31,10 @@ export const checkoutRouter = createTRPCRouter({
               "tenant.slug": {
                 equals: input.tenantSlug,
               },
-            }
-          ]
+            },
+          ],
         },
-      })
+      });
       if (products.totalDocs !== input.productIds.length) {
         throw new TRPCError({ code: "NOT_FOUND", message: "Products not found" });
       }
@@ -67,9 +66,9 @@ export const checkoutRouter = createTRPCRouter({
               id: product.id,
               name: product.name,
               price: product.price,
-            } as ProductMetadata
-          }
-        }
+            } as ProductMetadata,
+          },
+        },
       }));
       const checkout = await stripe.checkout.sessions.create({
         // note that ctx.session.user is not null by virtue of how protectedProcedure is implemented
@@ -81,19 +80,19 @@ export const checkoutRouter = createTRPCRouter({
         mode: "payment",
         line_items: lineItems,
         invoice_creation: {
-          enabled: true
+          enabled: true,
         },
         metadata: {
           userId: ctx.session.user.id,
-        } as CheckoutMetadata
+        } as CheckoutMetadata,
       });
       if (!checkout.url) {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Failed to create checkout session",
-        })
+        });
       }
-      return { url: checkout.url }
+      return { url: checkout.url };
     }),
   getProducts: baseProcedure
     .input(
