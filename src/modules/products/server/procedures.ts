@@ -1,3 +1,4 @@
+import { headers as getHeaders } from "next/headers";
 import { Category, Media, Tenant } from "@/payload-types";
 import { baseProcedure, createTRPCRouter } from "@/trpc/init";
 import { Sort, Where } from "payload";
@@ -15,12 +16,40 @@ export const productsRouter = createTRPCRouter({
       })
     )
     .query(async ({ ctx, input }) => {
+      const headers = await getHeaders();
+      const session = await ctx.db.auth({ headers });
       const data = await ctx.db.findByID({
         collection: "products",
         id: input.id,
       });
+      // isPurchased provides information for the client at the route
+      // /tenants/[tenantId]/products/[productId]
+      let isPurchased = false;
+      if (session.user) {
+        const ordersData = await ctx.db.find({
+          collection: "orders",
+          pagination: false,
+          limit: 1,
+          where: {
+            and: [
+              {
+                product: {
+                  equals: input.id,
+                },
+              },
+              {
+                user: {
+                  equals: session.user.id,
+                },
+              },
+            ],
+          },
+        });
+        isPurchased = !!ordersData.docs[0];
+      }
       return {
         ...data,
+        isPurchased,
         image: data.image as Media | null,
         tenant: data.tenant as Tenant & { image: Media | null },
       };
