@@ -11,7 +11,7 @@ import Link from "next/link";
 
 const CheckoutButtonLoading = () => {
   return (
-    <Button className="bg-white" variant="elevated" aria-hidden="true">
+    <Button className="bg-white" variant="elevated" aria-hidden="true" tabIndex={-1}>
       <ShoppingCartIcon />
     </Button>
   );

@@ -44,6 +44,7 @@ const SearchInput = ({
         <Button variant="elevated" asChild>
           <Link
             href={`/${LIBRARY_ROUTE}`}
+            prefetch
           >
             <BookmarkCheckIcon />
             Library

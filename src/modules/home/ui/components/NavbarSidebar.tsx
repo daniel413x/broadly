@@ -1,9 +1,13 @@
+"use client";
+
 import { ScrollArea } from "@/components/ui/common/shadcn/scroll-area";
 import {
   Sheet, SheetContent, SheetHeader, SheetTitle,
 } from "@/components/ui/common/shadcn/sheet";
-import { SIGN_IN_ROUTE, SIGN_UP_ROUTE } from "@/lib/data/routes";
+import { ADMIN_ROUTE, SIGN_IN_ROUTE, SIGN_UP_ROUTE } from "@/lib/data/routes";
 import { cn } from "@/lib/utils";
+import { useTRPC } from "@/trpc/client";
+import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { ReactNode } from "react";
 
@@ -23,6 +27,9 @@ const NavbarSidebar = ({
   open,
   onOpenChange,
 }: NavbarSidebarProps) => {
+  const trpc = useTRPC();
+  const session = useQuery(trpc.auth.session.queryOptions());
+  const isLoggedIn = session.data?.user;
   const buttonStyle = "p-4 w-full text-left hover:bg-black hover:text-white focus:bg-black focus:text-white flex items-center font-medium text-base";
   const onClickLink = () => {
     onOpenChange(false);
@@ -57,24 +64,38 @@ const NavbarSidebar = ({
                 </Link>
               </li>
             ))}
-            <li>
-              <Link
-                className={cn(buttonStyle, "border-t")}
-                href={`/${SIGN_IN_ROUTE}`}
-                onClick={onClickLink}
-              >
-                Log in
-              </Link>
-            </li>
-            <li>
-              <Link
-                className={buttonStyle}
-                href={`/${SIGN_UP_ROUTE}`}
-                onClick={onClickLink}
-              >
-                Start selling
-              </Link>
-            </li>
+            {isLoggedIn ? (
+              <li>
+                <Link
+                  href={`/${ADMIN_ROUTE}`}
+                  className={cn(buttonStyle, "border-t")}
+                  onClick={onClickLink}
+                >
+                  Dashboard
+                </Link>
+              </li>
+            ) : (
+              <>
+                <li>
+                  <Link
+                    className={cn(buttonStyle, "border-t")}
+                    href={`/${SIGN_IN_ROUTE}`}
+                    onClick={onClickLink}
+                  >
+                    Log in
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    className={buttonStyle}
+                    href={`/${SIGN_UP_ROUTE}`}
+                    onClick={onClickLink}
+                  >
+                    Start selling
+                  </Link>
+                </li>
+              </>
+            )}
           </ul>
         </ScrollArea>
       </SheetContent>
