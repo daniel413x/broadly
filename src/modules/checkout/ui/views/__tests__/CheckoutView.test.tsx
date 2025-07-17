@@ -53,8 +53,8 @@ const mockBasicState = () => {
       getMany: {
         infiniteQueryOptions: vi.fn(),
         infiniteQueryFilter: vi.fn(),
-      }
-    }
+      },
+    },
   });
   mockUseQuery.mockReturnValue({
     data: {
