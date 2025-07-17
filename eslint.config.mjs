@@ -17,7 +17,7 @@ import {
 import {
   fileURLToPath,
 } from "url";
-import pluginJest from "eslint-plugin-jest";
+import vitest from "eslint-plugin-vitest";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -31,20 +31,21 @@ export default defineConfig([
     "src/app/(payload)/**/*",
   ]),
   ...compat.extends("next/core-web-vitals", "next/typescript", "plugin:@next/next/recommended"),
-  // jest block
+  // vitest block
   {
     files: ["**/*.test.{js,ts,jsx,tsx}", "**/__tests__/**/*.{js,ts,jsx,tsx}"],
-    languageOptions: {
-      globals: {
-        ...globals.jest,
-      },
-    },
     plugins: {
-      jest: pluginJest,
+      vitest,
     },
     rules: {
-      // Optional: enable recommended rules
-      ...pluginJest.configs.recommended.rules,
+      ...vitest.configs.recommended.rules,
+      "vitest/max-nested-describe": ["error", { max: 3 }],
+    },
+    languageOptions: {
+      globals: {
+        // prevent no-undef warning spam in lint output
+        ...vitest.environments.env.globals,
+      },
     },
   },
   {
