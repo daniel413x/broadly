@@ -49,6 +49,12 @@ const mockBasicState = () => {
         mutationOptions: vi.fn(),
       },
     },
+    library: {
+      getMany: {
+        infiniteQueryOptions: vi.fn(),
+        infiniteQueryFilter: vi.fn(),
+      }
+    }
   });
   mockUseQuery.mockReturnValue({
     data: {
@@ -170,16 +176,6 @@ describe("CheckoutView", () => {
       },
       error: { data: { code: "NOT_FOUND" } },
       isLoading: false,
-    });
-    mockUseTRPC.mockReturnValue({
-      checkout: {
-        getProducts: {
-          queryOptions: vi.fn(),
-        },
-        purchase: {
-          mutationOptions: vi.fn(),
-        },
-      },
     });
 
     renderWithProviders(<CheckoutView tenantSlug="test-tenant" />);
