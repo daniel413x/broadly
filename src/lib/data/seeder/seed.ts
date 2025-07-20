@@ -202,7 +202,7 @@ const seed = async () => {
     // deal with recurrent errors that happen unpredictably with mongodb transactions in this context. additional error codes may need to be added
     if (retrys > 0 && (error.code === 251 || error.code === 112)) { // 251: NoSuchTransaction, 112: WriteConflict
       retrys = retrys - 1;
-      console.log(`Error code ${error.code} occured. Retrying ${retrys} more time${retrys > 1 ? "s" : ""}...`);
+      console.log(`Error code ${error.code} occured. Retrying ${retrys} more time${retrys === 1 ? "" : "s"}...`);
       await seed();
     } else {
       await payload.db.rollbackTransaction(transactionID);

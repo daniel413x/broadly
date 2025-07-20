@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import { StarIcon } from "lucide-react";
 
 interface StarRatingProps {
-  rating: number;
+  rating: number | string;
   className?: string;
   iconClassName?: string;
   text?: string;
@@ -17,7 +17,7 @@ const StarRating = ({
   iconClassName = "",
   text = "",
 }: StarRatingProps) => {
-  const safeRating = Math.max(MIN_RATING, Math.min(rating, MAX_RATING));
+  const safeRating = Math.max(MIN_RATING, Math.min(Number(rating), MAX_RATING));
   return (
     <div className={cn("flex items-center gap-x-1", className)}>
       {Array.from({ length: MAX_RATING })

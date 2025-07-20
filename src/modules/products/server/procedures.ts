@@ -5,6 +5,7 @@ import { Sort, Where } from "payload";
 import { z } from "zod";
 import { CURATED, HOT_AND_NEW, sortValues, TRENDING } from "../constants";
 import { DEFAULT_LIMIT } from "@/lib/data/constants";
+import { generateProductsWithSummarizedReviews, generateReviewRating } from "@/modules/utils";
 
 export const productsRouter = createTRPCRouter({
   // ctx being passed down is not native to tRPC
@@ -47,11 +48,48 @@ export const productsRouter = createTRPCRouter({
         });
         isPurchased = !!ordersData.docs[0];
       }
+      const reviews = await ctx.db.find({
+        collection: "reviews",
+        pagination: false,
+        where: {
+          product: {
+            equals: input.id,
+          },
+        },
+      });
+      const reviewRating = generateReviewRating(reviews.docs);
+      // object to help render "Ratings" presentational component in ProductView.tsx
+      const ratingDistribution: Record<number, number> = {
+        5: 0,
+        4: 0,
+        3: 0,
+        2: 0,
+        1: 0,
+      };
+      // increase the rating distribution for ratings keys matching each rating in the array
+      if (reviews.totalDocs > 0) {
+        reviews.docs.forEach((review) => {
+          const rating = review.rating;
+          if (rating >= 1 && rating <= 5) {
+            ratingDistribution[rating] = (ratingDistribution[rating] || 0) + 1;
+          }
+        });
+        Object.keys(ratingDistribution).forEach((key) => {
+          const rating = Number(key);
+          const count = ratingDistribution[rating] || 0;
+          ratingDistribution[rating] = Math.round(
+            (count / reviews.totalDocs) * 100
+          );
+        });
+      }
       return {
         ...data,
         isPurchased,
         image: data.image as Media | null,
         tenant: data.tenant as Tenant & { image: Media | null },
+        reviewRating,
+        reviewCount: reviews.totalDocs,
+        ratingDistribution,
       };
     }),
   getMany: baseProcedure
@@ -149,6 +187,7 @@ export const productsRouter = createTRPCRouter({
         page: input.cursor,
         limit: input.limit,
       });
+      const dataWithSummarizedReviews = await generateProductsWithSummarizedReviews(ctx.db, data);
       /*
       can just do:
       return data;
@@ -156,7 +195,7 @@ export const productsRouter = createTRPCRouter({
       */
       return {
         ...data,
-        docs: data.docs.map((doc) => ({
+        docs: dataWithSummarizedReviews.map((doc) => ({
           ...doc,
           image: doc.image as Media | null,
           tenant: doc.tenant as Tenant & { image: Media | null },
