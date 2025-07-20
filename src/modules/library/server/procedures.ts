@@ -3,6 +3,7 @@ import { createTRPCRouter, protectedProcedure } from "@/trpc/init";
 import { z } from "zod";
 import { DEFAULT_LIMIT } from "@/lib/data/constants";
 import { TRPCError } from "@trpc/server";
+import { generateProductsWithSummarizedReviews } from "@/modules/utils";
 
 export const libraryRouter = createTRPCRouter({
   // ctx being passed down is not native to tRPC
@@ -85,9 +86,10 @@ export const libraryRouter = createTRPCRouter({
           },
         },
       });
+      const dataWithSummarizedReviews = await generateProductsWithSummarizedReviews(ctx.db, productsData);
       return {
         ...productsData,
-        docs: productsData.docs.map((doc) => ({
+        docs: dataWithSummarizedReviews.map((doc) => ({
           ...doc,
           image: doc.image as Media | null,
           tenant: doc.tenant as Tenant & { image: Media | null },

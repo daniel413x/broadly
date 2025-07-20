@@ -10,7 +10,7 @@ interface ProductCardProps {
   tenantUsername: string;
   tenantImageUrl?: string | null;
   tenantSlug: string;
-  reviewRating: number;
+  reviewRating: number | string;
   reviewCount: number;
   price: number;
 }
