@@ -46,8 +46,8 @@ const ProductList = () => {
               tenantUsername={product.tenant?.name}
               tenantImageUrl={product.tenant.image?.url}
               tenantSlug={product.tenant.slug}
-              reviewCount={50}
-              reviewRating={3}
+              reviewCount={product.reviewCount}
+              reviewRating={product.reviewRating}
               /*
                 the tprc query return must be modified for image.url to be accessible
                 see ../../server/procedures.ts

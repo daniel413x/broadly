@@ -2,7 +2,7 @@
 
 // TODO: implement ratings
 
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import { useTRPC } from "@/trpc/client";
@@ -11,8 +11,9 @@ import { formatCurrency, generateTenantURL } from "@/lib/utils";
 import Link from "next/link";
 import StarRating from "@/components/ui/common/StarRating";
 import { Button } from "@/components/ui/common/shadcn/button";
-import { LinkIcon, StarIcon } from "lucide-react";
+import { CheckCheckIcon, LinkIcon, StarIcon } from "lucide-react";
 import { Progress } from "@/components/ui/common/shadcn/progress";
+import { toast } from "sonner";
 
 const CartButtonLoading = () => {
   return (
@@ -48,11 +49,23 @@ const ProductView = ({
     tenant,
     description,
     refundPolicy,
+    reviewRating,
+    reviewCount,
+    ratingDistribution,
   } = data;
   const tenantImageUrl = tenant?.image?.url;
   const tenantName = tenant?.name;
   const formattedPrice = formatCurrency(price);
   const noRefunds = refundPolicy === "no-refunds";
+  const [isCopied, setIsCopied] = useState<boolean>(false);
+  const handleClipboardClick = () => {
+    setIsCopied(true);
+    navigator.clipboard.writeText(window.location.href);
+    toast.success("Product link copied to clipboard");
+    setTimeout(() => {
+      setIsCopied(false);
+    }, 750);
+  };
   return (
     <div className="px-4 lg:px-12 py-10">
       <div className="border rounded-sm bg-white overflow-hidden">
@@ -98,20 +111,23 @@ const ProductView = ({
               <div className="hidden lg:flex px-6 py-4 items-center justify-center">
                 <div className="flex items-center gap-1">
                   <StarRating
-                    rating={3}
+                    rating={reviewRating}
                     iconClassName="size-4"
                   />
                 </div>
               </div>
             </div>
             <div className="block lg:hidden px-6 py-4 items-center justify-center border-b">
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-2.5">
                 <StarRating
-                  rating={3}
+                  rating={reviewRating}
                   iconClassName="size-4"
                 />
                 <p className="text-base font-medium">
-                  {5} ratings
+                  {reviewCount}
+                  {" "}
+                  rating
+                  {reviewCount === 1 ? "" : "s"}
                 </p>
               </div>
             </div>
@@ -138,10 +154,10 @@ const ProductView = ({
                   <Button
                     className="size-12"
                     variant="elevated"
-                    onClick={() => {}}
-                    disabled={false}
+                    onClick={handleClipboardClick}
+                    disabled={isCopied}
                   >
-                    <LinkIcon />
+                    {isCopied ? <CheckCheckIcon /> : <LinkIcon />}
                   </Button>
                 </div>
                 <p className="text-center font-medium">
@@ -156,10 +172,11 @@ const ProductView = ({
                   <div className="flex items-center gap-x-1 font-medium">
                     <StarIcon className="size-4 fill-black" />
                     <p>
-                      ({5})
+                      ({reviewRating})
                     </p>
                     <p className="text-base">
-                      {5} ratings
+                      {reviewCount} rating
+                      {reviewCount === 1 ? "" : "s"}
                     </p>
                   </div>
                 </div>
@@ -170,11 +187,11 @@ const ProductView = ({
                         {stars} {stars === 1 ? "star" : "stars"}
                       </div>
                       <Progress
-                        value={0}
+                        value={ratingDistribution[stars]}
                         className="h-[1lh]"
                       />
                       <div className="font-medium">
-                        {0}%
+                        {ratingDistribution[stars]}%
                       </div>
                     </Fragment>
                   ))}
