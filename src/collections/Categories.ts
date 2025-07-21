@@ -1,12 +1,18 @@
+import { isSuperAdmin } from "@/lib/access";
 import type { CollectionConfig } from "payload";
 
 export const Categories: CollectionConfig = {
   slug: "categories",
+  access: {
+    read: () => true,
+    create: ({ req }) => isSuperAdmin(req.user),
+    update: ({ req }) => isSuperAdmin(req.user),
+    delete: ({ req }) => isSuperAdmin(req.user),
+  },
   admin: {
     // use this property so that categories in the /admin dashboard dropdowns aren't just shown as their ID's
     useAsTitle: "name",
-  },
-  access: {
+    hidden: ({ user }) => !isSuperAdmin(user),
   },
   fields: [
     {
