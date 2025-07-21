@@ -22,6 +22,10 @@ export const productsRouter = createTRPCRouter({
       const data = await ctx.db.findByID({
         collection: "products",
         id: input.id,
+        // prevent premium content from being leaked
+        select: {
+          content: false,
+        },
       });
       // isPurchased provides information for the client at the route
       // /tenants/[tenantId]/products/[productId]
@@ -186,6 +190,10 @@ export const productsRouter = createTRPCRouter({
         sort,
         page: input.cursor,
         limit: input.limit,
+        // prevent premium content from being leaked
+        select: {
+          content: false,
+        },
       });
       const dataWithSummarizedReviews = await generateProductsWithSummarizedReviews(ctx.db, data);
       /*
