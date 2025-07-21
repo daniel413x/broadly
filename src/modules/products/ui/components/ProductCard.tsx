@@ -50,8 +50,7 @@ const ProductCard = ({
           </h2>
           <Link
             className="flex items-center gap-2 z-20"
-            // TODO: redirect to user shop
-            href="/user-shop"
+            href={`/${generateTenantURL(tenantSlug)}`}
           >
             <Image
               src={tenantImageUrl || "/author-avatar-placeholder.png"}
