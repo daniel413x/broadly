@@ -6,6 +6,7 @@ import { z } from "zod";
 import { CURATED, HOT_AND_NEW, sortValues, TRENDING } from "../constants";
 import { DEFAULT_LIMIT } from "@/lib/data/constants";
 import { generateProductsWithSummarizedReviews, generateReviewRating } from "@/modules/utils";
+import { TRPCError } from "@trpc/server";
 
 export const productsRouter = createTRPCRouter({
   // ctx being passed down is not native to tRPC
@@ -27,6 +28,13 @@ export const productsRouter = createTRPCRouter({
           content: false,
         },
       });
+      // throw error if product is archived
+      if (data.isArchived) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Product not found",
+        });
+      }
       // isPurchased provides information for the client at the route
       // /tenants/[tenantId]/products/[productId]
       let isPurchased = false;
@@ -112,7 +120,9 @@ export const productsRouter = createTRPCRouter({
     )
     .query(async ({ ctx, input }) => {
       const where: Where = {
-        price: {},
+        isArchived: {
+          not_equals: true,
+        },
       };
       let sort: Sort = "-createdAt";
       if (input.sort === CURATED) {
