@@ -3,6 +3,7 @@ import { TRPCError } from "@trpc/server";
 import { headers as getHeaders } from "next/headers";
 import { loginSchema, registerSchema } from "../schemas";
 import { generateAuthCookie } from "../utils";
+import { stripe } from "@/lib/stripe";
 
 export const authRouter = createTRPCRouter({
   // ctx being passed down is not native to tRPC
@@ -33,12 +34,19 @@ export const authRouter = createTRPCRouter({
           message: "Username already taken",
         });
       }
+      const account = await stripe.accounts.create({});
+      if (!account) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to create Stripe account",
+        });
+      }
       const tenant = await ctx.db.create({
         collection: "tenants",
         data: {
           name: input.username,
           slug: input.username,
-          stripeAccountId: "test",
+          stripeAccountId: account.id,
         },
       });
       await ctx.db.create({
