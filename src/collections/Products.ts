@@ -1,21 +1,23 @@
 import { isSuperAdmin } from "@/lib/access";
 import { Tenant } from "@/payload-types";
-import type { CollectionConfig } from "payload";
+import type { CollectionConfig, PayloadRequest } from "payload";
+
+const createUpdateAccessPermissions = ({ req }: { req: PayloadRequest }) => {
+  if (isSuperAdmin(req.user)) {
+    return true;
+  }
+  // default depth 2
+  const tenant = req.user?.tenants?.[0]?.tenant as Tenant;
+  // restrict tenants from creating products unless they have submitted stripe details
+  return Boolean(tenant?.stripeDetailsSubmitted);
+};
 
 export const Products: CollectionConfig = {
   slug: "products",
   access: {
     read: () => true,
-    create: ({ req }) => {
-      if (isSuperAdmin(req.user)) {
-        return true;
-      }
-      // default depth 2
-      const tenant = req.user?.tenants?.[0]?.tenant as Tenant;
-      // restrict tenants from creating products unless they have submitted stripe details
-      return Boolean(tenant?.stripeDetailsSubmitted);
-    },
-    update: ({ req }) => isSuperAdmin(req.user),
+    create: createUpdateAccessPermissions,
+    update: createUpdateAccessPermissions,
     delete: ({ req }) => isSuperAdmin(req.user),
   },
   admin: {
