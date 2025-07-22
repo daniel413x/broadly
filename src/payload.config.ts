@@ -27,6 +27,13 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
+    // possible actions: beforeDashboard, afterDashboard, beforeLogin, afterLogin, beforeNavLinks, etc...
+    // see https://payloadcms.com/docs/custom-components/root-components
+    // you may have to run:
+    // bun run generate:importmap
+    components: {
+      beforeNavLinks: ["@/components/ui/stripe/StripeVerify"],
+    },
   },
   // the cookiePrefix can be accessed like so: ctx.db.config.cookiePrefix
   // https://github.com/payloadcms/payload/blob/84cb2b5819d5be44d6f54c37603ce9cedc55924b/packages/payload/src/auth/extractJWT.ts#L23

@@ -1,7 +1,7 @@
 import configPromise from "@payload-config";
 import { getPayload } from "payload";
 
-let retrys = 5;
+let retrys = 100;
 
 const categories = [
   {
