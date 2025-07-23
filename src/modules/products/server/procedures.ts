@@ -151,6 +151,13 @@ export const productsRouter = createTRPCRouter({
         where["tenant.slug"] = {
           equals: input.tenantSlug,
         };
+      } else {
+        where["isPrivate"] = {
+          // if there is no tenant slug, then this context concerns the public storefront, e.g. routes like "/" or "/some-category"
+          // products where isPrivate is true will not be loaded on the public storefront
+          // they will still be loaded on the tenant's page
+          not_equals: true,
+        };
       }
       // if depth: 0 then we could use the id
       // but for this codebase, we are not doing that
