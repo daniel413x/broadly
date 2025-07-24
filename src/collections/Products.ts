@@ -1,5 +1,6 @@
 import { isSuperAdmin } from "@/lib/access";
 import { Tenant } from "@/payload-types";
+import { lexicalEditor, UploadFeature } from "@payloadcms/richtext-lexical";
 import type { CollectionConfig, PayloadRequest } from "payload";
 
 const createUpdateAccessPermissions = ({ req }: { req: PayloadRequest }) => {
@@ -32,7 +33,7 @@ export const Products: CollectionConfig = {
     },
     {
       name: "description",
-      type: "text",
+      type: "richText",
     },
     {
       name: "price",
@@ -73,7 +74,24 @@ export const Products: CollectionConfig = {
     },
     {
       name: "content",
-      type: "textarea",
+      type: "richText",
+      editor: lexicalEditor({
+        features: ({ defaultFeatures }) => [
+          ...defaultFeatures,
+          UploadFeature({
+            collections: {
+              media: {
+                fields: [
+                  {
+                    name: "name",
+                    type: "text",
+                  },
+                ],
+              },
+            },
+          }),
+        ],
+      }),
       admin: {
         description: "Protected content only visible to costumers after purchase. Add product documentation, downloadable files, getting started guides, and bonus materials. Supports Markdown formatting.",
       },

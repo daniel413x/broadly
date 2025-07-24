@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/common/shadcn/button";
 import { CheckCheckIcon, LinkIcon, StarIcon } from "lucide-react";
 import { Progress } from "@/components/ui/common/shadcn/progress";
 import { toast } from "sonner";
+import { defaultJSXConverters, RichText } from "@payloadcms/richtext-lexical/react";
 
 const CartButtonLoading = () => {
   return (
@@ -137,9 +138,8 @@ const ProductView = ({
                   No description provided
                 </p>
               ) : (
-                <p>
-                  {description}
-                </p>
+                // some formatting such as headers will not work without using converters
+                <RichText data={description} converters={defaultJSXConverters} />
               )}
             </div>
           </div>
