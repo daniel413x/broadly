@@ -6,6 +6,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 import { LIBRARY_ROUTE } from "@/lib/data/routes";
 import ReviewSidebar from "../components/ReviewSidebar";
+import { defaultJSXConverters, RichText } from "@payloadcms/richtext-lexical/react";
 
 interface ProductViewProps {
   productId: string;
@@ -44,9 +45,8 @@ const ProductView = ({
           </div>
           <div className="lg:col-span-5">
             {data.content ? (
-              <p>
-                {data.content}
-              </p>
+            // some formatting such as headers will not work without using converters
+              <RichText data={data.content} converters={defaultJSXConverters} />
             ) : (
               <p className="font-medium italic text-muted-foreground">
                 No special content
