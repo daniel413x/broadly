@@ -142,4 +142,30 @@ const ReviewForm = ({
   );
 };
 
+export const ReviewFormSkeleton = () => {
+  return (
+    <div className="flex flex-col gap-y-4">
+      <p className="font-medium">
+        ...
+      </p>
+      <StarPicker
+        disabled
+      />
+      <Textarea
+        disabled
+        placeholder="Want to leave a written review?"
+      />
+      <Button
+        variant="elevated"
+        disabled
+        type="button"
+        size="lg"
+        className="bg-black text-white hover:bg-pink-400 hover:text-primary w-fit"
+      >
+        Submit
+      </Button>
+    </div>
+  );
+};
+
 export default ReviewForm;

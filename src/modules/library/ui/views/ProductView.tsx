@@ -59,4 +59,19 @@ const ProductView = ({
   );
 };
 
+export const ProductViewSkeleton = () => {
+  return (
+    <div className="min-h-screen bg-white">
+      <div className="p-4 bg-[#F4F4F4] w-full border-b">
+        <div className="flex items-center gap-2">
+          <ArrowLeftIcon className="size-4" />
+          <span className="text font-medium">
+            Back to Library
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default ProductView;
