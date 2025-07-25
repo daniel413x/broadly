@@ -2,7 +2,8 @@
 
 import { useTRPC } from "@/trpc/client";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import ReviewForm from "./ReviewForm";
+import ReviewForm, { ReviewFormSkeleton } from "./ReviewForm";
+import { Suspense } from "react";
 
 interface ReviewSidebarProps {
   productId: string;
@@ -18,10 +19,12 @@ const ReviewSidebar = ({
     productId,
   }));
   return (
-    <ReviewForm
-      productId={productId}
-      initialData={data}
-    />
+    <Suspense fallback={<ReviewFormSkeleton />}>
+      <ReviewForm
+        productId={productId}
+        initialData={data}
+      />
+    </Suspense>
   );
 };
 

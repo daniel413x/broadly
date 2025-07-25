@@ -52,7 +52,6 @@ export const libraryRouter = createTRPCRouter({
           message: "Product not found",
         });
       }
-
       return product;
     }),
   getMany: protectedProcedure

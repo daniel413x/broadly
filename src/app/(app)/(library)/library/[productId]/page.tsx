@@ -4,15 +4,15 @@ import ProductView from "@/modules/library/ui/views/ProductView";
 import { getQueryClient, trpc } from "@/trpc/server";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
-interface LibraryPageProps {
+interface LibraryProductIdPageProps {
   params: Promise<{
     productId: string;
   }>
 }
 
-const LibraryPage = async ({
+const LibraryProductIdPage = async ({
   params,
-}: LibraryPageProps) => {
+}: LibraryProductIdPageProps) => {
   const { productId } = await params;
   const queryClient = getQueryClient();
   void queryClient.prefetchQuery(trpc.library.getOne.queryOptions({
@@ -30,4 +30,4 @@ const LibraryPage = async ({
   );
 };
 
-export default LibraryPage;
+export default LibraryProductIdPage;
