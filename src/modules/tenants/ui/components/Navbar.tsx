@@ -38,7 +38,7 @@ const Navbar = ({
     <nav className="h-20 border-b font-medium bg-white">
       <div className="max-w-(--breakpoint-xl) mx-auto flex justify-between items-center h-full px-4 lg:px-12">
         <div className="flex gap-2">
-          <Link href={`/${generateTenantURL(slug)}`} className="flex items-center gap-2">
+          <Link href={`${generateTenantURL(slug)}`} className="flex items-center gap-2">
             <Image
               src={tenant.image?.url || "/author-avatar-placeholder.png"}
               alt={slug}

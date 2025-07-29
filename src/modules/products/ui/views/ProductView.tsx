@@ -94,7 +94,7 @@ const ProductView = ({
                 </div>
               </div>
               <div className="px-6 py-4 flex items-center justify-center lg:border-r">
-                <Link href={`/${generateTenantURL(tenantSlug)}`} className="flex items-center gap-2">
+                <Link href={`${generateTenantURL(tenantSlug)}`} className="flex items-center gap-2">
                   {!tenantImageUrl ? null :(
                     <Image
                       src={tenantImageUrl}

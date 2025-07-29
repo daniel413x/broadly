@@ -30,7 +30,7 @@ const CheckoutButton = ({
   }
   return (
     <Button data-testid="checkout-button" variant="elevated" asChild className={cn("bg-white", className)} aria-label={ariaLabel}>
-      <Link href={`/${generateTenantURL(tenantSlug)}/${CHECKOUT_ROUTE}`}>
+      <Link href={`${generateTenantURL(tenantSlug)}/${CHECKOUT_ROUTE}`}>
         <ShoppingCartIcon data-testid="checkout-button-shoppingcart-icon" />
         {totalItems > 0 ? totalItems : ""}
       </Link>

@@ -35,7 +35,7 @@ const ProductCard = ({
         <Link
           className="relative aspect-square"
           aria-label={`Go to the product page for ${name}`}
-          href={`/${generateTenantURL(tenantSlug)}/${PRODUCTS_ROUTE}/${id}`}
+          href={`${generateTenantURL(tenantSlug)}/${PRODUCTS_ROUTE}/${id}`}
         >
           <Image
             alt=""
@@ -50,7 +50,7 @@ const ProductCard = ({
           </h2>
           <Link
             className="flex items-center gap-2 z-20"
-            href={`/${generateTenantURL(tenantSlug)}`}
+            href={`${generateTenantURL(tenantSlug)}`}
           >
             <Image
               src={tenantImageUrl || "/author-avatar-placeholder.png"}

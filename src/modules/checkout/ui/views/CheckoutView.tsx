@@ -101,8 +101,8 @@ const CheckoutView = ({
                 isLast={i === data.docs.length - 1}
                 imageUrl={product.image?.url || "/product-card-placeholder.png"}
                 name={product.name}
-                productUrl={`/${generateTenantURL(product.tenant.slug)}/products/${product.id}`}
-                tenantUrl={`/${generateTenantURL(product.tenant.slug)}`}
+                productUrl={`${generateTenantURL(product.tenant.slug)}/products/${product.id}`}
+                tenantUrl={`${generateTenantURL(product.tenant.slug)}`}
                 tenantName={product.tenant.name}
                 onRemove={onRemoveProduct}
                 price={product.price}
