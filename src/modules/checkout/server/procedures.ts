@@ -8,6 +8,7 @@ import { usdToInteger } from "../utils";
 import { stripe } from "@/lib/stripe";
 import { CHECKOUT_ROUTE, TENANTS_ROUTE } from "@/lib/data/routes";
 import { PLATFORM_FEE_PERCENT } from "@/lib/data/constants";
+import { generateTenantURL } from "@/lib/utils";
 
 export const checkoutRouter = createTRPCRouter({
   verify: protectedProcedure
@@ -124,13 +125,19 @@ export const checkoutRouter = createTRPCRouter({
         return (acc + item.price) * 100;
       }, 0);
       const platformFeePercent = Math.round(totalAmount * (PLATFORM_FEE_PERCENT / 100));
+      const domain = generateTenantURL(input.tenantSlug);
+      // if (process.env.NODE_ENV === "development") {
+      //   domain = `${process.env.NEXT_PUBLIC_APP_URL}/${TENANTS_ROUTE}/${input.tenantSlug}`;
+      // } else {
+      //   domain = `${input.tenantSlug}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
+      // }
       const checkout = await stripe.checkout.sessions.create({
         // note that ctx.session.user is not null by virtue of how protectedProcedure is implemented
         // protectedProcedure includes a branch that returns a 401 error if session.user is null
         // and the user is explicitly defined in the returned query object
         customer_email: ctx.session.user.email,
-        success_url: `${process.env.NEXT_PUBLIC_APP_URL}/${TENANTS_ROUTE}/${input.tenantSlug}/${CHECKOUT_ROUTE}?success=true`,
-        cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/${TENANTS_ROUTE}/${input.tenantSlug}/${CHECKOUT_ROUTE}?cancel=true`,
+        success_url: `${domain}/${CHECKOUT_ROUTE}?success=true`,
+        cancel_url: `${domain}/${CHECKOUT_ROUTE}?cancel=true`,
         mode: "payment",
         line_items: lineItems,
         invoice_creation: {

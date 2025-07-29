@@ -28,7 +28,7 @@ describe("CheckoutButton", () => {
     expect(button).toBeInTheDocument();
 
     const link = screen.getByRole("link");
-    expect(link).toHaveAttribute("href", "/tenant/test-tenant/checkout");
+    expect(link).toHaveAttribute("href", "tenant/test-tenant/checkout");
 
     const cartIcon = screen.getByTestId("checkout-button-shoppingcart-icon");
     expect(cartIcon).toBeInTheDocument();
@@ -45,7 +45,7 @@ describe("CheckoutButton", () => {
     expect(button).toBeInTheDocument();
 
     const link = screen.getByRole("link");
-    expect(link).toHaveAttribute("href", "/tenant/test-tenant/checkout");
+    expect(link).toHaveAttribute("href", "tenant/test-tenant/checkout");
 
     const cartIcon = screen.getByTestId("checkout-button-shoppingcart-icon");
     expect(cartIcon).toBeInTheDocument();
