@@ -16,7 +16,7 @@ const Navbar = ({
           Checkout
         </p>
         <Button variant="elevated" asChild>
-          <Link href={`/${generateTenantURL(slug)}`}>
+          <Link href={`${generateTenantURL(slug)}`}>
             Continue shopping
           </Link>
         </Button>

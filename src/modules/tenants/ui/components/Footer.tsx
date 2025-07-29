@@ -10,12 +10,12 @@ const poppins = Poppins({
 const Footer = () => {
   return (
     <footer className="border-t font-medium bg-white">
-      <div className="gap-2 max-w-(--breakpoint-xl) mx-auto flex items-center h-full py-4 lg:-py-12">
+      <div className="gap-2 max-w-(--breakpoint-xl) mx-auto flex items-center h-full p-6 lg:-py-12">
         <p>
           Powered by
         </p>
         <Link
-          href="/"
+          href={process.env.NEXT_PUBLIC_APP_URL!}
           className={cn("font-semibold text-2xl", poppins.className)}
         >
           broadly
