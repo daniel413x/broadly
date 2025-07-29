@@ -6,7 +6,7 @@ import { z } from "zod";
 import { CheckoutMetadata, ProductMetadata } from "../types";
 import { usdToInteger } from "../utils";
 import { stripe } from "@/lib/stripe";
-import { CHECKOUT_ROUTE, TENANTS_ROUTE } from "@/lib/data/routes";
+import { CHECKOUT_ROUTE } from "@/lib/data/routes";
 import { PLATFORM_FEE_PERCENT } from "@/lib/data/constants";
 import { generateTenantURL } from "@/lib/utils";
 
