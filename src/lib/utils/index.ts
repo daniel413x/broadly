@@ -6,8 +6,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-// return a url corresponding to the tenant's subdomain such as https://daniel.broadly.com
-
+// if enabled, return a url corresponding to a tenant's subdomain such as https://daniel.broadly.com however, the organization must have a domain
 export function generateTenantURL(tenantSlug: string) {
   const isDevelopment = process.env.NODE_ENV === "development";
   const isSubdomainRoutingEnabled = process.env.NEXT_PUBLIC_ENABLE_SUBDOMAIN_ROUTING === "true";
