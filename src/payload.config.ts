@@ -7,6 +7,7 @@ import path from "path";
 import { buildConfig, Config } from "payload";
 import { fileURLToPath } from "url";
 import sharp from "sharp";
+import { vercelBlobStorage } from "@payloadcms/storage-vercel-blob";
 
 import { Users } from "./collections/Users";
 import { Media } from "./collections/Media";
@@ -68,6 +69,12 @@ export default buildConfig({
       // determines super admin user
       userHasAccessToAllTenants: (user) => isSuperAdmin(user),
     }),
-    // storage-adapter-placeholder
+    vercelBlobStorage({
+      enabled: true,
+      token: process.env.BLOB_READ_WRITE_TOKEN,
+      collections: {
+        media: true,
+      },
+    }),
   ],
 });
