@@ -15,8 +15,15 @@ export const generateAuthCookie = async ({
     value,
     httpOnly: true,
     path: "/",
-    sameSite: "none",
-    domain: process.env.NEXT_PUBLIC_ROOT_DOMAIN,
-    secure: process.env.NODE_ENV === "production",
+    // enable auth flow to function normally in development
+    // note that subdomain functionality in development will not work
+    // e.g. if
+    // NEXT_PUBLIC_ENABLE_SUBDOMAIN_ROUTING
+    // is true
+    ...(process.env.NODE_ENV === "production" && {
+      sameSite: "none",
+      domain: process.env.NEXT_PUBLIC_ROOT_DOMAIN,
+      secure: true,
+    }),
   });
 };

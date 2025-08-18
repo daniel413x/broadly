@@ -5,7 +5,7 @@ import { Button } from "../common/shadcn/button";
 const StripeVerify = () => {
   return (
     <Link href={`/${STRIPE_VERIFY_ROUTE}`}>
-      <Button className="">
+      <Button>
         Verify Account
       </Button>
     </Link>
