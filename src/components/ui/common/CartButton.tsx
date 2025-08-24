@@ -34,7 +34,6 @@ const CartButton = ({
       <Link
         prefetch
         href={`/${LIBRARY_ROUTE}/${id}`}
-        className=""
       >
         View in Library
       </Link>
