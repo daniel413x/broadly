@@ -37,7 +37,8 @@ const CheckoutView = ({
       setStates({ success: false, cancel: false });
     },
     onSuccess: (res) => {
-      window.location.href = res.url;
+      // will always be defined because the api testing branch is never called in the client
+      window.location.href = res.url!;
     },
     onError: (e) => {
       if (e?.data?.code === "UNAUTHORIZED") {
