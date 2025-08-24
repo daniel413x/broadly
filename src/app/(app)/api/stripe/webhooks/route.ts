@@ -26,6 +26,7 @@ export async function POST(req: Request) {
   const permittedEvents: string[] = [
     "checkout.session.completed",
     "account.updated",
+    "payment_intent.succeeded",
   ];
   const payload = await getPayload({ config: configPromise });
   if (permittedEvents.includes(event.type)) {
@@ -69,6 +70,40 @@ export async function POST(req: Request) {
               },
             });
           })));
+          break;
+        }
+        // mock session checkout
+        // should be as close as possible to case "checkout.session.completed"
+        // intended for API-based testing only, e.g. JMeter
+        case "payment_intent.succeeded": {
+          const data = event.data.object as Stripe.PaymentIntent;
+          if (!data.metadata?.userId) {
+            throw new Error("User ID is required");
+          }
+          const user = await (await payload).findByID({
+            collection: "users",
+            id: data.metadata?.userId,
+          });
+          if (!user) {
+            throw new Error("User not found");
+          }
+          // unlike sessions, line items are stored directly in metadata when the payment intent is created
+          if (!data.metadata?.line_items || data.metadata?.line_items.length === 0) {
+            throw new Error("No line items found");
+          }
+          const lineItems = await JSON.parse(data.metadata.line_items!);
+          await Promise.all(lineItems.map(async (lineItem: ExpandedLineItem) => {
+            await payload.create({
+              collection: "orders",
+              data: {
+                stripeCheckoutSessionId: data.id,
+                stripeAccountId: event.account!,
+                user: user.id,
+                product: lineItem.price.product.metadata.id,
+                name: lineItem.price.product.name,
+              },
+            });
+          }));
           break;
         }
         case "account.updated": {
