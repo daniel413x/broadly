@@ -72,6 +72,12 @@ export default defineConfig([
       "@stylistic/indent": ["error", 2, { SwitchCase: 1 }],
       "@stylistic/quotes": ["error", "double"],
       "@stylistic/semi": ["error", "always"],
+      "@stylistic/jsx-quotes": ["error", "prefer-double"],
+      "@stylistic/no-multiple-empty-lines": ["error", {
+        max: 1,
+        maxBOF: 0,
+        maxEOF: 0,
+      }],
       "@stylistic/array-bracket-spacing": ["error", "never"],
       "@stylistic/block-spacing": ["error", "always"],
       "@stylistic/brace-style": ["error", "1tbs", { allowSingleLine: true }],
@@ -97,7 +103,6 @@ export default defineConfig([
       "@stylistic/no-multi-spaces": ["error", { ignoreEOLComments: false }],
       "@stylistic/linebreak-style": ["error", "unix"],
       "@stylistic/max-len": "off",
-      "@stylistic/jsx-quotes": ["error", "prefer-double"],
 
       "react/react-in-jsx-scope": "off",
       "react/jsx-props-no-spreading": "off",
