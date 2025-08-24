@@ -9,7 +9,7 @@ export type ProductMetadata = {
 
 export type CheckoutMetadata = {
   userId: string;
-}
+};
 
 export type ExpandedLineItem = Stripe.LineItem & {
   price: Stripe.Price & {
