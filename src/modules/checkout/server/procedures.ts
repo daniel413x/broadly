@@ -59,6 +59,7 @@ export const checkoutRouter = createTRPCRouter({
       z.object({
         productIds: z.array(z.string()).min(1, "At least one product ID is required"),
         tenantSlug: z.string().min(1, "Tenant slug is required"),
+        api: z.string().optional().default("false"),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -88,6 +89,7 @@ export const checkoutRouter = createTRPCRouter({
       if (products.totalDocs !== input.productIds.length) {
         throw new TRPCError({ code: "NOT_FOUND", message: "Products not found" });
       }
+      // note this is the product owner's tenant data and not the customer
       const tenantsData = await ctx.db.find({
         collection: "tenants",
         limit: 1,
@@ -102,6 +104,7 @@ export const checkoutRouter = createTRPCRouter({
       if (!tenant) {
         throw new TRPCError({ code: "NOT_FOUND", message: "Tenant not found" });
       }
+      // pertains to the product owner and not the customer
       if (!tenant.stripeDetailsSubmitted) {
         throw new TRPCError({ code: "BAD_REQUEST", message: "Tenant Stripe details missing" });
       }
@@ -125,12 +128,69 @@ export const checkoutRouter = createTRPCRouter({
         return (acc + item.price) * 100;
       }, 0);
       const platformFeePercent = Math.round(totalAmount * (PLATFORM_FEE_PERCENT / 100));
+      // accommodate api-based performance testing (JMeter) by utilizing Stripe API
+      // this branch mocks a session checkout
+      // if api is true, create a payment intent instead of a session
+      /*
+      test the API branch:
+
+      curl -X POST "http://localhost:3000/api/trpc/checkout.purchase?batch=1"   -H "Content-Type: application/json"   -H "Cookie: broadly-token=COOKIE" -d '{"0":{"json":{"api":"true","tenantSlug":"jmeter-shop","productIds":["68a3c1e9435fae07d6f02af5"]}}}'
+
+      where COOKIE can be obtained from authenticating via the app
+
+      curl https://api.stripe.com/v1/payment_intents/pi_PAYMENT_INTENT/confirm \
+      -u SECRET_KEY: \
+      -H "Stripe-Account: STRIPE_ACCOUNT" \
+      -d payment_method=pm_card_visa
+
+      where PAYMENT_INTENT is returned by the request to /api/trpc/checkout.purchase (pi_...)
+      and SECRET_KEY is your Stripe secret key (sk_...)
+      and STRIPE_ACCOUNT is your Stripe secret key (sk_...)
+      */
+      const isApiCall = input.api === "true";
+      if (isApiCall) {
+        // mock the same data structure as that which is worked with in the webhook calls (after Stripe processing)
+        const mockLineItems = lineItems.map((li) => ({
+          price: {
+            product: {
+              name: li.price_data?.product_data?.name,
+              metadata: {
+                id: li.price_data?.product_data?.metadata?.id,
+                stripeAccountId: tenant.stripeAccountId,
+              },
+            },
+          },
+        }));
+        const paymentIntent = await stripe.paymentIntents.create({
+          amount: products.docs.reduce((acc, item) => {
+            return (acc + item.price) * 100;
+          }, 0),
+          currency: "usd",
+          // special test ref "pm_card_visa" allows test payment without card details
+          payment_method: "pm_card_visa",
+          application_fee_amount: platformFeePercent,
+          // return_url: process.env.NEXT_PUBLIC_APP_URL,
+          payment_method_types: ["card"],
+          automatic_payment_methods: {
+            enabled: false,
+          },
+          metadata: {
+            userId: ctx.session.user.id,
+            tenantSlug: input.tenantSlug,
+            line_items: JSON.stringify(mockLineItems),
+          } as CheckoutMetadata,
+        }, {
+          stripeAccount: tenant.stripeAccountId,
+        });
+        if (!paymentIntent.client_secret) {
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Failed to create payment intent",
+          });
+        }
+        return { clientSecret: paymentIntent.client_secret };
+      }
       const domain = generateTenantURL(input.tenantSlug);
-      // if (process.env.NODE_ENV === "development") {
-      //   domain = `${process.env.NEXT_PUBLIC_APP_URL}/${TENANTS_ROUTE}/${input.tenantSlug}`;
-      // } else {
-      //   domain = `${input.tenantSlug}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
-      // }
       const checkout = await stripe.checkout.sessions.create({
         // note that ctx.session.user is not null by virtue of how protectedProcedure is implemented
         // protectedProcedure includes a branch that returns a 401 error if session.user is null
