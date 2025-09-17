@@ -63,9 +63,9 @@ const ProductFilters = () => {
   // dynamically set any number of filters to null, clearing all filters
   const handleClickOnClear = () => {
     const resetObject =
-    Object.fromEntries(
-      Object.keys(filters).map((key) => key === "sort" ? [key, filters.sort] : [key, null])
-    );
+      Object.fromEntries(
+        Object.keys(filters).map((key) => key === "sort" ? [key, filters.sort] : [key, null])
+      );
     setFilters(resetObject);
   };
   const handleOnMinPriceChange = (value: string) => {
