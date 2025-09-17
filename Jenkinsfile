@@ -26,8 +26,8 @@ def commonCredentials = [
     string(credentialsId: 'PAYLOAD_SECRET', variable: 'PAYLOAD_SECRET'),
     string(credentialsId: 'STRIPE_ACCOUNT', variable: 'STRIPE_ACCOUNT'),
     string(credentialsId: 'STRIPE_SECRET_KEY', variable: 'STRIPE_SECRET_KEY'),
-    string(credentialsId: 'STRIPE_WEBHOOK_SECRET', variable: 'STRIPE_WEBHOOK_SECRET')
-    string(credentialsId: 'BLOB_READ_WRITE_TOKEN', variable: 'STRIPE_WEBHOOK_SECRET')
+    string(credentialsId: 'STRIPE_WEBHOOK_SECRET', variable: 'STRIPE_WEBHOOK_SECRET'),
+    string(credentialsId: 'BLOB_READ_WRITE_TOKEN', variable: 'BLOB_READ_WRITE_TOKEN')
 ]
 
 pipeline {
