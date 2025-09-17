@@ -19,10 +19,15 @@ you can dynamically add strings to the sharedCredentials array in the course of 
 
 */
 def commonCredentials = [
+    string(credentialsId: 'NEXT_PUBLIC_APP_URL', variable: 'NEXT_PUBLIC_APP_URL'),
+    string(credentialsId: 'NEXT_PUBLIC_ROOT_DOMAIN', variable: 'NEXT_PUBLIC_ROOT_DOMAIN'),
+    string(credentialsId: 'NEXT_PUBLIC_ENABLE_SUBDOMAIN_ROUTING', variable: 'NEXT_PUBLIC_ENABLE_SUBDOMAIN_ROUTING'),
     string(credentialsId: 'PAYLOAD_DATABASE_URI', variable: 'DATABASE_URI'),
     string(credentialsId: 'PAYLOAD_SECRET', variable: 'PAYLOAD_SECRET'),
+    string(credentialsId: 'STRIPE_ACCOUNT', variable: 'STRIPE_ACCOUNT'),
     string(credentialsId: 'STRIPE_SECRET_KEY', variable: 'STRIPE_SECRET_KEY'),
-    string(credentialsId: 'STRIPE_WEBHOOK_SECRET', variable: 'STRIPE_WEBHOOK_SECRET')
+    string(credentialsId: 'STRIPE_WEBHOOK_SECRET', variable: 'STRIPE_WEBHOOK_SECRET'),
+    string(credentialsId: 'BLOB_READ_WRITE_TOKEN', variable: 'BLOB_READ_WRITE_TOKEN')
 ]
 
 pipeline {
