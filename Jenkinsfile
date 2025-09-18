@@ -30,6 +30,12 @@ def commonCredentials = [
     string(credentialsId: 'BLOB_READ_WRITE_TOKEN', variable: 'BLOB_READ_WRITE_TOKEN')
 ]
 
+def perfTestingCredentials = commonCredentials + [
+    string(credentialsId: 'STRIPE_ACCOUNT', variable: 'STRIPE_ACCOUNT'),
+    string(credentialsId: 'INFLUX_DB_TOKEN', variable: 'INFLUX_DB_TOKEN'),
+    string(credentialsId: 'INFLUX_DB_URL', variable: 'INFLUX_DB_URL')
+]
+
 pipeline {
     agent any
 
