@@ -82,6 +82,7 @@ pipeline {
             steps {
                 sh '''
                 git clone https://github.com/daniel413x/broadly-functional-tests.git functional-tests
+                git clone https://github.com/daniel413x/broadly-performance-tests.git performance-tests
                 '''
             }
         }
@@ -137,12 +138,12 @@ pipeline {
                         script {
                             def pids = startServers()
 
-                            waitForService('http://localhost:3000', 'frontend')
-                                dir('functional-tests') {
-                                    sh '''
-                                        mvn test -Dheadless=true
-                                    '''
-                                }
+                            waitForService('https://broadly-flame.vercel.app', 'frontend')
+                            dir('functional-tests') {
+                                sh '''
+                                    mvn test -Dheadless=true
+                                '''
+                            }
                             stopServers(pids)
                         }
                     }
@@ -160,6 +161,32 @@ pipeline {
                         reportFiles: 'all-pages-report.html',
                         reportName: 'Test Report: Functional Testing'
                     ])
+                }
+            }
+        }
+
+        stage('Perform Performance Tests (Smoke)') {
+            steps {
+                script {
+                    withCredentials(perfTestingCredentials) {
+                        script {
+                            waitForService('https://broadly-flame.vercel.app', 'frontend')
+                            dir('performance-tests') {
+                                sh '''
+                                    bzt properties.yaml scenarios/smoke.yaml
+                                '''
+                            }
+                        }
+                    }
+                }
+            }
+
+            post {
+                always {
+                    dir('performance-tests') {
+                        perfReport '**/*.jtl'
+                        archiveArtifacts artifacts: '*/**.jtl', allowEmptyArchive: true
+                    }
                 }
             }
         }
