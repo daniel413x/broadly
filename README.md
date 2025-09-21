@@ -1,36 +1,56 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Broadly Front-End Client
+**Author:** Daniel Maramba
 
-## Getting Started
+## Prerequisites
 
-First, run the development server:
+### Environment variables
+
+The following environment variables must be defined:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+NEXT_PUBLIC_APP_URL=VALUE     # e.g. http://localhost:3000
+NEXT_PUBLIC_ROOT_DOMAIN=VALUE  # e.g. localhost:3000
+NEXT_PUBLIC_ENABLE_SUBDOMAIN_ROUTING="false"  # "true" if the project has a domain to its name and subdomain routing is configured correctly
+DATABASE_URI=VALUE     # a MongoDB connection string, e.g. "mongodb+srv://USERNAME:PASSWORD@HOST/DB"
+PAYLOAD_SECRET=VALUE # Found in the Payload dashboard
+STRIPE_SECRET_KEY=VALUE # Found in the Stripe dashboard
+STRIPE_WEBHOOK_SECRET=VALUE # Found in the Stripe dashboard
+STRIPE_ACCOUNT=VALUE  # Found in the Stripe dashboard
+BLOB_READ_WRITE_TOKEN=VALUE # Generated in the Vercel dashboard
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Local development
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Run the local development server
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Start the local development server:
 
-## Learn More
+```bash
+bun run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Unit tests  
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Unit testing for the project is written in the Vitest framework.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Running tests
 
-## Deploy on Vercel
+Run the command:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+bun run test
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Docker
+
+### Manage environmental variables
+
+It is recommended to prepare a file `.development.env` or `.production.env` containing all environmental variables listed in the *Prerequisites* section. This file can be used as a Docker BuildKit secret.
+
+### Build the image
+
+Run the command (development image example):
+
+```bash
+DOCKER_BUILDKIT=1 docker build --secret id=env,src=.env.development -t daniel413x/broadly-client:dev -f ./Dockerfile.dev .
+```
