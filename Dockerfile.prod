@@ -1,5 +1,5 @@
 # recommended build command:
-# DOCKER_BUILDKIT=1 docker build --secret id=env,src=.env.production -t daniel413x/broadly-client:1.0.0 -f ./Dockerfile.dev .
+# DOCKER_BUILDKIT=1 docker build --secret id=env,src=.env.production -t daniel413x/broadly-client:1.0.0 -f ./Dockerfile.prod .
 
 FROM oven/bun:1-alpine
 
@@ -7,10 +7,8 @@ WORKDIR /app
 
 COPY package.json bun.lockb* ./
 
-RUN --mount=type=secret,id=env sh -lc 'set -a; . /run/secrets/env; set +a; bun install --ci'
-
 COPY . .
 
-RUN bun run build
+RUN --mount=type=secret,id=env sh -lc 'set -a; . /run/secrets/env; set +a; bun install --ci && bun run build'
 
 CMD ["bun", "run", "start"]

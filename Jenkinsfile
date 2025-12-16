@@ -88,7 +88,6 @@ pipeline {
             steps {
                 sh '''
                 git clone https://github.com/daniel413x/broadly-functional-tests.git functional-tests
-                git clone https://github.com/daniel413x/broadly-performance-tests.git performance-tests
                 '''
             }
         }
@@ -176,10 +175,18 @@ pipeline {
                 script {
                     withCredentials(perfTestingCredentials) {
                         script {
-                            waitForService('https://broadly-flame.vercel.app', 'frontend')
+                            // waitForService('https://broadly-flame.vercel.app', 'frontend')
+                            sh 'git clone https://github.com/daniel413x/broadly-performance-tests.git performance-tests'
                             dir('performance-tests') {
+                                // this step executes a preparatory script add_distributed_hosts.sh
+                                // which initializes JMeter agents for distributed load testing
+                                // add_distributed_hosts.sh depends on kubectl
+                                // add_distributed_hosts.sh depends on the availability of a Role for the Jenkins service allowing the verb "get" for pods
                                 sh '''
-                                    bzt properties.yaml scenarios/smoke.yaml
+                                    kubectl scale deployment jmeter-agents --replicas=3
+                                    kubectl wait --for=condition=Ready pod -l app=jmeter-agent --timeout=120s
+                                    ./add_distributed_hosts.sh scenarios/load.yaml
+                                    bzt properties.yaml scenarios/load.yaml
                                 '''
                             }
                         }
