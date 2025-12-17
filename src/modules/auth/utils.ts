@@ -5,6 +5,8 @@ interface GenerateAuthCookieProps {
   value: string;
 }
 
+const isHttps = process.env.NEXT_PUBLIC_APP_URL?.startsWith("https://");
+
 export const generateAuthCookie = async ({
   prefix,
   value,
@@ -14,16 +16,20 @@ export const generateAuthCookie = async ({
     name: `${prefix}-token`,
     value,
     httpOnly: true,
-    path: "/",
     // enable auth flow to function normally in development
     // note that subdomain functionality in development will not work
     // e.g. if
     // NEXT_PUBLIC_ENABLE_SUBDOMAIN_ROUTING
     // is true
-    ...(process.env.NODE_ENV === "production" && {
-      sameSite: "none",
-      domain: process.env.NEXT_PUBLIC_ROOT_DOMAIN,
-      secure: true,
-    }),
+    path: "/",
+    ...(isHttps
+      ? {
+        sameSite: "none",
+        secure: true,
+        domain: process.env.NEXT_PUBLIC_ROOT_DOMAIN,
+      }
+      : {
+        sameSite: "lax",
+      }),
   });
 };
